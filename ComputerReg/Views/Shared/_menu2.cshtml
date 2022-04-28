@@ -1,0 +1,38 @@
+﻿@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@model IEnumerable<BigMenu>
+<div class="row">
+   
+    @{
+
+
+        /*
+        DataLibrary.clsBusiness clsDataA = new DataLibrary.clsBusiness(Configuration.GetConnectionString("sqlConnect").ToString());
+        string strEmpno = "TA150005";
+        string strSQL = "SELECT DISTINCT  a.* FROM vw_menu a,GroupToPrg b ,GroupToUser c WHERE a.PrgSerNo=b.PrgSerNo AND b.GROUPNo =c.GROUPNo AND c.Empno='" + strEmpno + "' ORDER BY a.BigSeq,a.MasterNo,a.SeqNo ";
+        System.Data.DataTable dt = new clsDataA.RunSQL(strSQL);
+
+        BigMenu aa = new BigMenu();
+        */
+
+    }
+    @foreach (var item in Model)
+    {
+        //第一層
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown_" role="button" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                @item.bigname
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                @foreach (var o2 in item.item)
+                {
+                    //第二層
+                    <a class="dropdown-item" href="@o2.path">@o2.name</a>
+
+
+                }
+            </div>
+        </li>
+    }
+</div>

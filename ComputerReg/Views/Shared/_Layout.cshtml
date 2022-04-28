@@ -1,0 +1,241 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard Admin Template by Tooplate.com</title>
+    <!--
+
+    Template 2108 Dashboard
+
+    http://www.tooplate.com/view/2108-dashboard
+
+    -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <!-- https://fonts.google.com/specimen/Open+Sans -->
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+    <!-- https://fontawesome.com/ -->
+    <link rel="stylesheet" href="css/fullcalendar.min.css">
+    <!-- https://fullcalendar.io/ -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- https://getbootstrap.com/ -->
+    <link rel="stylesheet" href="css/tooplate.css">
+    
+    
+</head>
+
+<body id="reportsPage">
+    <div class="" id="home">
+        <div class="container">
+            <div id="divMenu" class="row">
+
+            </div>
+            <!--
+            <div class="row">
+                <div class="col-12">
+                    <nav class="navbar navbar-expand-xl navbar-light bg-light">
+                        <a class="navbar-brand" href="#">
+                            <i class="fas fa-3x fa-tachometer-alt tm-site-icon"></i>
+                            <h1 class="tm-site-title mb-0">Dashboard</h1>
+                        </a>
+                        <button class="navbar-toggler ml-auto mr-0" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav mx-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#">
+                                        Dashboard
+                                        <span class="sr-only">(current)</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                       aria-expanded="false">
+                                        Reports
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="#">Daily Report</a>
+                                        <a class="dropdown-item" href="#">Weekly Report</a>
+                                        <a class="dropdown-item" href="#">Yearly Report</a>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="products.html">Products</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="accounts.html">Accounts</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                       aria-expanded="false">
+                                        Settings
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <a class="dropdown-item" href="#">Profile</a>
+                                        <a class="dropdown-item" href="#">Billing</a>
+                                        <a class="dropdown-item" href="#">Customize</a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex" href="login.html">
+                                        <i class="far fa-user mr-2 tm-logout-icon"></i>
+                                        <span>Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+                -->
+
+            @RenderBody()
+            <footer class="row tm-mt-small">
+                <div class="col-12 font-weight-light">
+                    <p class="d-inline-block tm-bg-black text-white py-2 px-4">
+                        Copyright &copy; 2018 Admin Dashboard . Created by
+                        <a rel="nofollow" href="https://www.tooplate.com" class="text-white tm-footer-link">Tooplate</a>
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="js/moment.min.js"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="js/utils.js"></script>
+    <script src="js/Chart.min.js"></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="js/fullcalendar.min.js"></script>
+    <!-- https://fullcalendar.io/ -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="js/tooplate-scripts.js"></script>
+    <script>
+        let ctxLine,
+            ctxBar,
+            ctxPie,
+            optionsLine,
+            optionsBar,
+            optionsPie,
+            configLine,
+            configBar,
+            configPie,
+            lineChart;
+        barChart, pieChart;
+        // DOM is ready
+        $(function () {
+            updateChartOptions();
+            drawLineChart(); // Line Chart
+            drawBarChart(); // Bar Chart
+            drawPieChart(); // Pie Chart
+            drawCalendar(); // Calendar
+
+            $(window).resize(function () {
+                updateChartOptions();
+                updateLineChart();
+                updateBarChart();
+                reloadPage();
+            });
+        })
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //建menu
+            var strHtml = "";
+            var Ii = 0;
+            var Jj = 0;
+            var Fir = {};
+            var Sec = {};
+            var Menu = {};
+
+
+            strHtml = strHtml + "<div class=\"col-12\">";
+            strHtml = strHtml + "<nav class=\"navbar navbar-expand-xl navbar-light bg-light\">";
+            strHtml = strHtml + "<a class=\"navbar-brand\" href=\"./\">";
+            strHtml = strHtml + "<i class=\"fas fa-3x fa-tachometer-alt tm-site-icon\"></i>";
+            strHtml = strHtml + "<h1 class=\"tm-site-title mb-0\">資訊安全登記系統</h1>";
+            strHtml = strHtml + "</a>";
+            strHtml = strHtml + "<button class=\"navbar-toggler ml-auto mr-0\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarSupportedContent\" aria-controls=\"navbarSupportedContent\"";
+            strHtml = strHtml + " aria-expanded=\"false\" aria-label=\"Toggle navigation\">";
+            strHtml = strHtml + "<span class=\"navbar-toggler-icon\"></span>";
+            strHtml = strHtml + "</button>";
+            strHtml = strHtml + "<div class=\"collapse navbar-collapse\" id=\"navbarSupportedContent\">";
+            strHtml = strHtml + "<ul class=\"navbar-nav mx-auto\">";
+            strHtml = strHtml + "";
+            $.post("getMenu", {}, function (data, result) {
+                //Menu = data.menu;
+                for (Ii = 0; Ii < data.menu.length; Ii++) {
+                    strHtml = strHtml + "<li class=\"nav-item dropdown\">";
+                    strHtml = strHtml + "<a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown_" + (Ii + 1) + "\" role=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\"";
+                    strHtml = strHtml + "aria-expanded=\"false\">";
+                    strHtml = strHtml + data.menu[Ii].bigname;
+                    strHtml = strHtml + "</a>";
+                    strHtml = strHtml + "<div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">";
+                    for (Jj = 0; Jj < data.menu[Ii].item.length; Jj++) {
+                        strHtml = strHtml + "<a class=\"dropdown-item\" href=\"" + data.menu[Ii].item[Jj].path + "\">" + data.menu[Ii].item[Jj].name + "</a>";
+                        strHtml = strHtml + "";
+                    }
+                }
+                strHtml = strHtml + "</ul>";
+                strHtml = strHtml + "<ul class=\"navbar-nav\">";
+                strHtml = strHtml + "<li class=\"nav-item\">";
+                strHtml = strHtml + "<a class=\"nav-link d-flex\" href=\"#\" onclick=\"logout()\">";
+                strHtml = strHtml + "<i class=\"far fa-user mr-2 tm-logout-icon\">" + data.user_name + "</i>";
+                strHtml = strHtml + "<span>Logout</span>";
+                strHtml = strHtml + "</a>";
+                strHtml = strHtml + "</li>";
+                strHtml = strHtml + "</ul>";
+                strHtml = strHtml + "</div>";
+                strHtml = strHtml + "</nav>";
+                strHtml = strHtml + "</div>";
+                strHtml = strHtml + "</div>";
+                $("#divMenu").html(strHtml);
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        /*$(document).ready(function () {
+                $.post("controller/getMenu", {}, function (data, result) {
+            var Ii;
+            var Jj;
+            var Html = "";
+            for (Ii = 0; Ii < data.BigMenu.length; Ii++) {
+                Html = Html + "<li class=\"nav-item dropdown\">";
+                Html = Html + "<a class=\"nav-link dropdown-toggle\" href=\"#\" id=\"navbarDropdown_\" role=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" ";
+                Html = Html + "aria-expanded=\"false\">";
+
+                Html = Html + data.BigMenu.bigname;
+                Html = Html + "</a>";
+                Html = Html + "<div class=\"dropdown-menu\" aria-labelledby=\"navbarDropdown\">";
+                for (Jj = 0; Jj < data.BigMenu.item.length; Jj++) {
+
+                    Html = Html + "<a class=\"dropdown-item\" href=\"" + data.BigMenu.item[Jj].path + "\">" + data.BigMenu.item[Jj].name + "</a>";
+
+                }
+                Html = Html + "</div>";
+                Html = Html + "</li>";
+                Html = Html + "";
+                Html = Html + "";
+
+
+            }
+            $("#divMenu").html(Html);
+
+        });
+
+});*/
+
+    </script>
+
+</body>
+</html>
