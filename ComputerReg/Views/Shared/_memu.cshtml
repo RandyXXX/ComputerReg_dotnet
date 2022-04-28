@@ -1,0 +1,29 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model IEnumerable<BigMenu>
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        //第一層
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown_" role="button" data-toggle="dropdown" aria-haspopup="true"
+               aria-expanded="false">
+                @item.bigname
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                @foreach (var o2 in item.item)
+                {
+                    //第二層
+                    <a class="dropdown-item" href="@o2.path">@o2.name</a>
+
+
+                }
+            </div>
+        </li>
+    }
+</div>
