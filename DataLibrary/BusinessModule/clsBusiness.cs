@@ -13,6 +13,158 @@ namespace DataLibrary
         {
             clsdata = new clsData(strCn);
         }
+        #region RunSQL
+        public DataTable RunSQL(string strSQL)
+        {
+            return clsdata.RunSQL(strSQL);
+
+
+        }
+
+        #endregion
+        #region e-mail log
+        public bool AddEmailLog(string strEmpno, string strMailContent, ref string strErrMsg)
+        {
+            return clsdata.AddEmailLog(strEmpno, strMailContent, ref strErrMsg);
+        }
+        #endregion
+        #region Item_m
+        public DataTable QueryItemEmpno(string MID)
+        {
+            return clsdata.QueryItemEmpno(MID);
+        }
+        public DataTable QueryItem_m()
+        {
+            return clsdata.QueryItem_m();
+        }
+
+        public DataTable QueryItem_m(string strid)
+        {
+            return clsdata.QueryItem_m(strid);
+        }
+
+        public DataTable QueryItem_m(string strItem_Name, string strSeq, string strstats)
+        {
+            return clsdata.QueryItem_m(strItem_Name, strSeq, strstats);
+        }
+        public int CountItem_m(string strItem_Name, string strSeq, string strstats)
+        {
+            return clsdata.CountItem_m(strItem_Name, strSeq, strstats);
+        }
+        public DataTable QueryItem_m(string strItem_Name, string strSeq, string strstats, int intPage, int intPageSize)
+        {
+            return clsdata.QueryItem_m(strItem_Name, strSeq, strstats, intPage, intPageSize);
+        }
+        public bool AddItem_m(string strItem_Name, string strSeq, string strstats, ref string strErrMsg)
+        {
+            return clsdata.AddItem_m(strItem_Name, strSeq, strstats, ref strErrMsg);
+        }
+
+        public bool UpdItem_m(string strid, string strItem_Name, string strSeq, string strstats, ref string strErrMsg)
+        {
+            return clsdata.UpdItem_m(strid, strItem_Name, strSeq, strstats, ref strErrMsg);
+        }
+        public bool DelItem_m(string strid, ref string strErrMsg)
+        {
+            return clsdata.DelItem_m(strid, ref strErrMsg);
+        }
+        #endregion
+
+        #region Item_d
+        public DataTable QueryItem_d()
+        {
+            return clsdata.QueryItem_d();
+        }
+        public DataTable QueryItem_dByEmpno(string strEmpno)
+        {
+            return clsdata.QueryItem_dByEmpno(strEmpno);
+        }
+        public DataTable QueryItem_d(string strid)
+        {
+            return clsdata.QueryItem_d(strid);
+        }
+        public DataTable QueryItem_dByRelayKey(string strMID)
+        {
+            return clsdata.QueryItem_dByRelayKey(strMID);
+        }
+
+        public DataTable QueryItem_d(string strMID, string strempno, string strItem_No, string strItem_Desc, string strPrice, string strBuyDateTime, string strQty, string strActual_User, string strUsage, string strstats)
+        {
+            return clsdata.QueryItem_d(strMID, strempno, strItem_No, strItem_Desc, strPrice, strBuyDateTime, strQty, strActual_User, strUsage, strstats);
+        }
+        public int CountItem_dByRelayKey(string strMID)
+        {
+            return clsdata.CountItem_dByRelayKey(strMID);
+        }
+        public DataTable QueryItem_dByRelayKey(string strMID, int intPage, int intPageSize)
+        {
+            return clsdata.QueryItem_dByRelayKey(strMID, intPage, intPageSize);
+        }
+        public bool AddItem_d(string strMID, string strempno, string strItem_No, string strItem_Desc, string strPrice, string strBuyDateTime, string strQty, string strActual_User, string strUsage, string strstats, ref string strErrMsg)
+        {
+            return clsdata.AddItem_d(strMID, strempno, strItem_No, strItem_Desc, strPrice, strBuyDateTime, strQty, strActual_User, strUsage, strstats, ref strErrMsg);
+        }
+        public bool UpdItem_d(string strid, string strActual_User, string strUsage, ref string strErrMsg)
+        {
+            return clsdata.UpdItem_d(strid, strActual_User, strUsage, ref strErrMsg);
+        }
+        public bool UpdItem_d(string strid, string strActual_User, string strUsage, string strstats, ref string strErrMsg)
+        {
+            return clsdata.UpdItem_d(strid, strActual_User, strUsage, strstats, ref strErrMsg);
+        }
+        public bool UpdItem_d(string strid, string strMID, string strempno, string strItem_No, string strItem_Desc, string strPrice, string strBuyDateTime, string strQty, string strActual_User, string strUsage, string strstats, ref string strErrMsg)
+        {
+            return clsdata.UpdItem_d(strid, strMID, strempno, strItem_No, strItem_Desc, strPrice, strBuyDateTime, strQty, strActual_User, strUsage, strstats, ref strErrMsg);
+        }
+        public bool DelItem_d(string strid, ref string strErrMsg)
+        {
+            return clsdata.DelItem_d(strid, ref strErrMsg);
+        }
+        #endregion
+
+        #region GHR
+        public DataTable QueryCompany(string strCountry_ID)
+        {
+            return clsdata.QueryCompany(strCountry_ID);
+        }
+        public string GetCompany_ID(string strEmpno, string strName)
+        {
+            return clsdata.GetCompany_ID(strEmpno, strName);
+        }
+        public DataTable QueryCompanyIDFromEmpno(string strMain_User, bool QueryLayoff = false)
+        {
+            if (QueryLayoff)
+                return clsdata.QueryCompanyIDFromEmpno2(strMain_User);
+            else
+                return clsdata.QueryCompanyIDFromEmpno(strMain_User);
+        }
+        public DataTable GetUserInfo(string strAD, string strUserName)
+        {
+            return clsdata.GetUserInfo(strAD, strUserName);
+        }
+        public DataTable GetUserInfo(string strEmpno)
+        {
+            return clsdata.GetUserInfoByEmpno(strEmpno);
+        }
+        public DataTable GetUserInfoByEmpno(string strEmpno)
+        {
+            return clsdata.GetUserInfoByEmpnoLike(strEmpno);
+        }
+        public DataTable GetUserInfoByName(string strEmpno)
+        {
+            return clsdata.GetUserInfoByName(strEmpno);
+        }
+        public DataTable GetUserInfoByEmpnoEqual(string strEmpno)
+        {
+            return clsdata.GetUserInfoByEmpnoEqual(strEmpno);
+
+        }
+        public DataTable GetUserInfoByEmail(string strEmail)
+        {
+            return clsdata.GetUserInfoByEmail(strEmail);
+
+        }
+        #endregion
 
         #region Code_d
 
@@ -360,6 +512,89 @@ namespace DataLibrary
             return strHTML;
         }
         #endregion
-    
+        #region Response_d
+        public DataTable QueryResponse_d()
+        {
+            return clsdata.QueryResponse_d();
+        }
+        public string QueryResponse_dByCode(string strCode)
+        {
+            DataTable dt = new DataTable();
+            dt = clsdata.QueryResponse_dByCode(strCode);
+            try
+            {
+                return dt.Rows[0]["Response_String"].ToString();
+            }
+            catch (Exception ex)
+            {
+            }
+            return "";
+        }
+        public DataTable QueryResponse_d(string strid)
+        {
+            return clsdata.QueryResponse_d(strid);
+        }
+
+        public DataTable QueryResponse_d(string strResponse_Name, string strResponse_Desc, string strResponse_Code, string strResponse_String)
+        {
+            return clsdata.QueryResponse_d(strResponse_Name, strResponse_Desc, strResponse_Code, strResponse_String);
+        }
+        public int CountResponse_d(string strResponse_Name, string strResponse_Desc, string strResponse_Code, string strResponse_String)
+        {
+            return clsdata.CountResponse_d(strResponse_Name, strResponse_Desc, strResponse_Code, strResponse_String);
+        }
+        public DataTable QueryResponse_d(string strResponse_Name, string strResponse_Desc, string strResponse_Code, string strResponse_String, int intPage, int intPageSize)
+        {
+            return clsdata.QueryResponse_d(strResponse_Name, strResponse_Desc, strResponse_Code, strResponse_String, intPage, intPageSize);
+        }
+        public bool AddResponse_d(string strResponse_Name, string strResponse_Desc, string strResponse_Code, string strResponse_String, ref string strErrMsg)
+        {
+            return clsdata.AddResponse_d(strResponse_Name, strResponse_Desc, strResponse_Code, strResponse_String, ref strErrMsg);
+        }
+
+        public bool UpdResponse_d(string strid, string strResponse_Name, string strResponse_Desc, string strResponse_Code, string strResponse_String, ref string strErrMsg)
+        {
+            return clsdata.UpdResponse_d(strid, strResponse_Name, strResponse_Desc, strResponse_Code, strResponse_String, ref strErrMsg);
+        }
+        public bool DelResponse_d(string strid, ref string strErrMsg)
+        {
+            return clsdata.DelResponse_d(strid, ref strErrMsg);
+        }
+        #endregion
+        #region API-登入資訊
+        public bool IsAppGrant(string strAppName, string strKey)
+        {
+            if (clsdata.IsAppGrant(strAppName, strKey) > 0)
+                return true;
+            return false;
+        }
+        public bool AddLoginFile(string empno, string MobileSystem, string PackageName, string VersionName, string VersionCode, string ServerKey, string DeviceId, string Model, ref string strErrMsg)
+        {
+            clsdata.DeleteLoginFile(empno, ref strErrMsg);
+
+            return clsdata.AddLoginFile(empno, MobileSystem, PackageName, VersionName, VersionCode, ServerKey, DeviceId, Model, ref strErrMsg);
+        }
+        public bool CheckVerson(string ServerKey)
+        {
+            if (clsdata.CheckVerson(ServerKey).Rows.Count > 0)
+                return true;
+            return false;
+        }
+        public bool CheckLogin(string ServerKey)
+        {
+            if (clsdata.CheckLogin(ServerKey).Rows.Count > 0)
+                return true;
+            return false;
+        }
+        #endregion
+        #region 離職員工
+        public bool AddQuitEmpno(string strEmpno, string strInsid, ref string strErrMsg)
+        {
+            return clsdata.AddQuitEmpno(strEmpno, strInsid, ref strErrMsg);
+        }
+        #endregion
+        #region 寫入tiptop
+        
+        #endregion
     }
 }
