@@ -834,6 +834,68 @@ namespace DataLibrary
             return pub_lib.Query(strSQL, V_arr).Tables[0];
         }
         #endregion
+        #region "Group"
+        public DataTable QueryAllGroup()
+        {
+            string strSQL = "SELECT * FROM UserGroup ORDER BY SeqNo";
 
+            return pub_lib.Query(strSQL).Tables[0];
+        }
+        public bool AddGroup(string GROUPNO,string GroupDesc,string GroupName,ref string  strErrMsg)
+        {
+            string[,] V_arr=new string[3,2]; 
+            string strSQL = "INSERT INTO UserGroup (GROUPNO, GroupName, GroupDesc ) VALUES (@GROUPNO, @GroupName, @GroupDesc)";
+            V_arr[0, 0] = "@GROUPNO";
+            V_arr[0, 1] = GROUPNO;
+
+            V_arr[1, 0] = "@GroupName";
+            V_arr[1, 1] = GroupDesc;
+
+            V_arr[2, 0] = "@GroupDesc";
+            V_arr[2, 1] = GroupName;
+
+            return pub_lib.ExecSQL(strSQL, V_arr,ref strErrMsg);
+
+        }
+        public bool UPDGroup(string SeqNo,string GROUPNO, string GroupDesc, string GroupName, ref string strErrMsg)
+        {
+            string[,] V_arr = new string[4, 2];
+            string strSQL = "UPDATE UserGroup SET GROUPNO =@GROUPNO , GroupName=@GroupName, GroupDesc=@GroupDesc  WHERE SeqNo=@SeqNo";
+            V_arr[0, 0] = "@GROUPNO";
+            V_arr[0, 1] = GROUPNO;
+
+            V_arr[1, 0] = "@GroupName";
+            V_arr[1, 1] = GroupDesc;
+
+            V_arr[2, 0] = "@GroupDesc";
+            V_arr[2, 1] = GroupName;
+
+            V_arr[3, 0] = "@SeqNo";
+            V_arr[3, 1] = SeqNo;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool DELGroup(string SeqNo,ref string strErrMsg)
+        {
+            string[,] V_arr = new string[1, 2];
+            string strSQL = "DELETE UserGroup WHERE SeqNo=@SeqNo";
+
+            V_arr[0, 0] = "@SeqNo";
+            V_arr[0, 1] = SeqNo;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        } 
+        public DataTable QRYGroup(string GROUPNO)
+        {
+
+            string strSQL = "SELECT a.Seqno ID,b.*,CASE WHEN b.MasterNo=-1 THEN '目錄' ELSE '程式' END TypeDesc FROM GroupToPrg a, Category b WHERE a.PrgSerNo=b.PrgSerNo AND a.GROUPNO=@GROUPNO ORDER BY b.SeqNo";
+
+
+
+        }
+
+        #endregion
     }
 }

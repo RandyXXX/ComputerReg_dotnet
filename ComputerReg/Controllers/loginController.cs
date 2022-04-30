@@ -50,7 +50,7 @@ namespace ComputerReg.Controllers
             dt = clsData.Login(inO.LoginType, inO.DomainName, inO.UserAccount, inO.UserPwd);
             if (dt.Rows.Count > 0)
             {
-                lm.ServerKey = aes.AES_Encrypt(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "_"+ inO.DomainName + "_" + inO.UserAccount, "ABCDAAAAAAAAAAAAAA_" + inO.fingerprint);
+                lm.ServerKey = aes.AES_Encrypt(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "_"+ inO.DomainName + "_" + inO.UserAccount, configuration.GetValue<string>("AppSetting:AES_header") + "_" + inO.fingerprint);
                 lm.UserName = dt.Rows[0]["Real_Name"].ToString();
             }
 
@@ -62,7 +62,7 @@ namespace ComputerReg.Controllers
             AES.AES aes = new AES.AES();
             string strTmp = "";
 
-            strTmp = aes.AES_Decrypt(inU.ServerKey, "ABCDAAAAAAAAAAAAAA_" + inU.fingerprint);
+            strTmp = aes.AES_Decrypt(inU.ServerKey, configuration.GetValue<string>("AppSetting:AES_header") + "_" + inU.fingerprint);
             if (strTmp.Equals(""))
             {
                 return false;

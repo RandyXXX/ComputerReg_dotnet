@@ -56,7 +56,7 @@ namespace ComputerReg.Controllers
                 o1[Ii] = new BigMenu();
                 o1[Ii].bigname = Dv.ToTable().Rows[0]["PrgName"].ToString();
 
-                Dv.RowFilter = " BigSeq='"+ dt2.Rows[Ii]["BigSeq"].ToString() +"'";
+                Dv.RowFilter = " BigSeq='"+ dt2.Rows[Ii]["BigSeq"].ToString() +"' AND MasterNo<>-1";
                 dt3 = Dv.ToTable();
                 o2 = new SubMenu[dt3.Rows.Count];
                 for (Jj = 0; Jj < dt3.Rows.Count; Jj++)
