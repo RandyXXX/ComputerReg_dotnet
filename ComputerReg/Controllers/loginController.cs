@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,11 +41,16 @@ namespace ComputerReg.Controllers
             clsBusiness clsData = new clsBusiness(configuration.GetValue<string>("ConnectionStrings:sqlConnect"));
 
             outLoginMoudle lm = new outLoginMoudle();
+            DataTable dt = new DataTable();
+            //AES
+            AES.AES aes = new AES.AES();
 
-
-
-
-
+            dt = clsData.Login(inO.LoginType, inO.DomainName, inO.UserAccount, inO.UserPwd);
+            if (dt.Rows.Count > 0)
+            {
+                lm.ServerKey = aes.AES_Encrypt(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "_"+ inO.DomainName + "_" + inO.UserAccount, "AAAAA_" + DateTime.Now.ToString("yyyyMMdd"));
+                lm.UserName = dt.Rows[0]["Real_Name"].ToString();
+            }
 
             return lm;
         }

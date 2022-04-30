@@ -101,7 +101,7 @@
             <footer class="row tm-mt-small">
                 <div class="col-12 font-weight-light">
                     <p class="d-inline-block tm-bg-black text-white py-2 px-4">
-                        Copyright &copy; 2018 Admin Dashboard . Created by
+                        Copyright &copy; @DateTime.Now.ToString("yyyy") Randy Dashboard . Created by
                         <a rel="nofollow" href="https://www.tooplate.com" class="text-white tm-footer-link">Tooplate</a>
                     </p>
                 </div>
@@ -120,6 +120,7 @@
     <script src="js/bootstrap.min.js"></script>
     <!-- https://getbootstrap.com/ -->
     <script src="js/tooplate-scripts.js"></script>
+    <script type="text/javascript" src="js/fingerprint.js"></script>
     <script>
         let ctxLine,
             ctxBar,
@@ -157,7 +158,12 @@
             var Fir = {};
             var Sec = {};
             var Menu = {};
-
+            var ServerKey;
+            var fingerprint="";//瀏覽器指紋
+            ServerKey=window.localStorage.getItem("ServerKey");
+            fingerprint=new Fingerprint().get();
+            //就算有，檢查有無過期
+            
 
             strHtml = strHtml + "<div class=\"col-12\">";
             strHtml = strHtml + "<nav class=\"navbar navbar-expand-xl navbar-light bg-light\">";

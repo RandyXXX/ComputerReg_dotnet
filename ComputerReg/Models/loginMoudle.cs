@@ -4,11 +4,13 @@
 /// </summary>
 public class inLogin{
     //AD or LDAP
-    public string loginType { set; get; }
+    public string LoginType { set; get; }
+    public string DomainName { set; get; }
     //帳號
     public string UserAccount { set; get; }
     //密碼
-    public string Password { set; get; }
+    public string UserPwd { set; get; }
+    public string fingerprint { set; get; }
 
 }
 

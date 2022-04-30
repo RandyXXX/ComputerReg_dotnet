@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>技嘉科技—資訊安全登記系統</title>
+    <title>XX科技—資訊安全登記系統</title>
     <!--
 
     電腦登記系統
@@ -36,6 +36,7 @@
 <!-- https://getbootstrap.com/ -->
 <script src="js/tooplate-scripts.js"></script>
 <script src="js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="js/fingerprint.js"></script>
 <script type="text/javascript">
     /*let ctxLine,
         ctxBar,
@@ -74,6 +75,32 @@
         $("#txtLoginWay").html("請使用您的LDAP帳號及密碼登入");
         $("#txtAccount").attr("placeholder", "E-mail(randy.tung@aaa.com)");
         $("#txtPassword").attr("placeholder", "密碼(1234)");
+    }
+    function login(){
+        var loginWay="";
+        var AD="";
+        var UserAccount="";
+        var Pass="";
+        var fingerprint=new Fingerprint().get();
+        if($("#rbAD":checked).length>0){
+            loginWay="1";
+            AD=$("#txtAccount").val().split("\\")[0];
+            UserAccount=$("#txtAccount").val().split("\\")[1];
+
+        }else{
+            loginWay="3";
+             UserAccount=$("#txtAccount").val();
+        }
+        Pass=$("#txtPassword").val();
+        $.post("/login",{LoginType: $("#selType").val(), DomainName: AD, UserAccount: UserAccount, UserPwd: Pass,fingerprint:fingerprint},function(data,result){
+            if(data.ServerKey!=""){
+
+                window.localStorage.setItem('ServerKey', data.ServerKey);
+            }
+
+        });
+
+
     }
     /*
     function login(){

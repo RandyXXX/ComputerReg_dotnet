@@ -367,6 +367,18 @@ namespace DataLibrary
         //    return strHTML;
         //}
         #endregion
-
+        #region "登入"
+        public DataTable Login(string Type,string AD,string Account,string Pass)
+        {
+            if (Type.Equals("1"))
+            {
+                return clsdata.LoginAD(AD, Account, Pass);
+            }
+            else
+            {
+                return clsdata.LoginLDAP(Account, Pass);
+            }
+        }
+        #endregion
     }
 }
