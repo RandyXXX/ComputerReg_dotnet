@@ -12,22 +12,24 @@ using System.Threading.Tasks;
 
 namespace ComputerReg.Controllers
 {
+    [Route("[controller]")]
     public class loginController : Controller
     {
         private readonly ILogger<loginController> _logger;
         
         IConfiguration configuration;
 
-        public loginController(ILogger<loginController> logger)
-        {
-            _logger = logger;
-        }
+        //public loginController(ILogger<loginController> logger)
+        //{
+        //    _logger = logger;
+        //}
 
         public loginController(IConfiguration iConfig)
         {
             configuration = iConfig;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return PartialView();
@@ -48,12 +50,27 @@ namespace ComputerReg.Controllers
             dt = clsData.Login(inO.LoginType, inO.DomainName, inO.UserAccount, inO.UserPwd);
             if (dt.Rows.Count > 0)
             {
-                lm.ServerKey = aes.AES_Encrypt(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "_"+ inO.DomainName + "_" + inO.UserAccount, "AAAAA_" + DateTime.Now.ToString("yyyyMMdd"));
+                lm.ServerKey = aes.AES_Encrypt(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "_"+ inO.DomainName + "_" + inO.UserAccount, "ABCDAAAAAAAAAAAAAA_" + inO.fingerprint);
                 lm.UserName = dt.Rows[0]["Real_Name"].ToString();
             }
 
             return lm;
         }
+        [HttpPut]
+        public bool CheckServerKey(inCheckServerKey inU)
+        {
+            AES.AES aes = new AES.AES();
+            string strTmp = "";
+
+            strTmp = aes.AES_Decrypt(inU.ServerKey, "ABCDAAAAAAAAAAAAAA_" + inU.fingerprint);
+            if (strTmp.Equals(""))
+            {
+                return false;
+            }
+            return true;
+
+        }
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

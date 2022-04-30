@@ -82,7 +82,8 @@
         var UserAccount="";
         var Pass="";
         var fingerprint=new Fingerprint().get();
-        if($("#rbAD":checked).length>0){
+        
+        if($("#rbAD").is(":checked")){
             loginWay="1";
             AD=$("#txtAccount").val().split("\\")[0];
             UserAccount=$("#txtAccount").val().split("\\")[1];
@@ -92,10 +93,12 @@
              UserAccount=$("#txtAccount").val();
         }
         Pass=$("#txtPassword").val();
-        $.post("/login",{LoginType: $("#selType").val(), DomainName: AD, UserAccount: UserAccount, UserPwd: Pass,fingerprint:fingerprint},function(data,result){
-            if(data.ServerKey!=""){
+        $.post("/login",{LoginType: loginWay, DomainName: AD, UserAccount: UserAccount, UserPwd: Pass,fingerprint:fingerprint},function(data,result){
+            if(data.serverKey!=""){
 
-                window.localStorage.setItem('ServerKey', data.ServerKey);
+                window.localStorage.setItem('ServerKey', data.serverKey);
+                window.localStorage.setItem('UserName', data.userName);
+                window.location.href="/";
             }
 
         });
@@ -185,7 +188,8 @@
                                     <input name="txtPassword" type="password" class="form-control validate" id="txtPassword" required placeholder="開機密碼(1234)">
                                 </div>
                                 <div class="input-group mt-3">
-                                    <button type="submit" class="btn btn-primary d-inline-block mx-auto">Login</button>
+                                    <!--<button type="submit" class="btn btn-primary d-inline-block mx-auto">Login</button>-->
+                                    <input type="button" class="btn btn-primary d-inline-block mx-auto" value="Login" onclick="login()" />
                                 </div>
 
                                 <input type="text" value="login" id="Function" name="Function" style="display:none">

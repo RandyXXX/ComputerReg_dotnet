@@ -807,7 +807,7 @@ namespace DataLibrary
         public DataTable LoginAD(string AD,string Account,string Pass)
         {
             string[,] V_arr = new string[3, 2];
-            string    strSQL = "SELECT * FROM User_Data WHERE AD=@AD AND Account=@Account AND Pass=@Pass";
+            string    strSQL = "SELECT a.id, a.AD, a.Account, a.stats,(SELECT TOP 1 b.USER_Name FROM [EHR].[dbo].[vw_ADDRESS_BOOK2] b WHERE  b.AD_Domain_Name=a.AD AND b.AD_Account=a.Account ) Real_Name, a.Pass, a.E_mail FROM User_Data a WHERE a.AD=@AD AND a.Account=@Account AND a.Pass=@Pass AND a.stats='00'";
             
             V_arr[0, 0] = "@AD";
             V_arr[0, 1] = AD;
@@ -823,7 +823,7 @@ namespace DataLibrary
         public DataTable LoginLDAP(string E_mail, string Pass)
         {
             string[,] V_arr = new string[2, 2];
-            string strSQL = "SELECT * FROM User_Data WHERE E_mail=@E_mail AND  Pass=@Pass";
+            string strSQL = "SELECT a.id, a.AD, a.Account, a.stats,(SELECT TOP 1 b.USER_Name FROM [EHR].[dbo].[vw_ADDRESS_BOOK2] b WHERE  b.E_Mail1=a.E_mail  ) Real_Name, a.Pass, a.E_mail  FROM User_Data WHERE E_mail=@E_mail AND  Pass=@Pass  AND stats='00'";
 
             V_arr[0, 0] = "@E_mail";
             V_arr[0, 1] = E_mail;        

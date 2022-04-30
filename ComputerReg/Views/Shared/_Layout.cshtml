@@ -131,7 +131,7 @@
             configLine,
             configBar,
             configPie,
-            lineChart;
+            lineChart,
         barChart, pieChart;
         // DOM is ready
         $(function () {
@@ -152,7 +152,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             //建menu
-            var strHtml = "";
+            
             var Ii = 0;
             var Jj = 0;
             var Fir = {};
@@ -160,11 +160,35 @@
             var Menu = {};
             var ServerKey;
             var fingerprint="";//瀏覽器指紋
+            //檢查有無ServerKey
             ServerKey=window.localStorage.getItem("ServerKey");
+            if(ServerKey==null){
+                ServerKey="";
+            }
+            //取得指紋
             fingerprint=new Fingerprint().get();
-            //就算有，檢查有無過期
-            
+            //就算有，檢查是否偽造
+            $.ajax({
+                url: '/login',
+                type: 'put',
+                data: { ServerKey: ServerKey,fingerprint:fingerprint},
+                dataType: 'json',
+                success: function (data) {
+                    if(data==true){
+                        //過關，顯示menu
+                        ShowMenu();
+                    }else{
+                        //
+                        window.location.href="\login";
+                    }
+                }
+            });
 
+            
+         });
+        
+        function ShowMenu(){
+            var strHtml = "";
             strHtml = strHtml + "<div class=\"col-12\">";
             strHtml = strHtml + "<nav class=\"navbar navbar-expand-xl navbar-light bg-light\">";
             strHtml = strHtml + "<a class=\"navbar-brand\" href=\"./\">";
@@ -195,9 +219,9 @@
                 strHtml = strHtml + "</ul>";
                 strHtml = strHtml + "<ul class=\"navbar-nav\">";
                 strHtml = strHtml + "<li class=\"nav-item\">";
-                strHtml = strHtml + "<a class=\"nav-link d-flex\" href=\"#\" onclick=\"logout()\">";
-                strHtml = strHtml + "<i class=\"far fa-user mr-2 tm-logout-icon\">" + data.user_name + "</i>";
-                strHtml = strHtml + "<span>Logout</span>";
+                strHtml = strHtml + "<a class=\"nav-link d-flex\" href=\"#\" onclick=\"Logout()\">";
+                strHtml = strHtml + "<i class=\"far fa-user mr-2 tm-logout-icon\">" + window.localStorage.getItem("UserName")+ "</i>";
+                strHtml = strHtml + "<span onclick=\"Logout()\">Logout</span>";
                 strHtml = strHtml + "</a>";
                 strHtml = strHtml + "</li>";
                 strHtml = strHtml + "</ul>";
@@ -206,8 +230,14 @@
                 strHtml = strHtml + "</div>";
                 strHtml = strHtml + "</div>";
                 $("#divMenu").html(strHtml);
-            });
-        });
+                 });
+        }
+        function Logout(){
+            window.localStorage.removeItem('ServerKey');
+            window.localStorage.removeItem('UserName');
+            window.location.href="/";
+
+        }
     </script>
     <script type="text/javascript">
         /*$(document).ready(function () {
