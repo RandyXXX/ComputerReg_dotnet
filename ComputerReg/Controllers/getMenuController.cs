@@ -38,7 +38,7 @@ namespace ComputerReg.Controllers
             DataTable dt4 = new DataTable();
             clsBusiness clsData = new clsBusiness(configuration.GetValue<string>("ConnectionStrings:sqlConnect"));
 
-            dt1 = clsData.RunSQL("SELECT DISTINCT  a.* FROM vw_menu a,GroupToPrg b ,GroupToUser c WHERE a.PrgSerNo=b.PrgSerNo AND b.GROUPNo =c.GROUPNo AND c.Empno='TA150005' ORDER BY a.BigSeq,a.MasterNo,a.SeqNo ");
+            dt1 = clsData.GetMenu("TA150005");
 
             Dv = dt1.DefaultView;
             dt2 = Dv.ToTable(true, "BigSeq");

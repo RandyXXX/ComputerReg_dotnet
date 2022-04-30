@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>技嘉科技—資訊安全登記系統</title>
+    <!--
+
+    電腦登記系統
+
+    http://www.tooplate.com/view/2108-dashboard
+
+    -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600">
+    <!-- https://fonts.google.com/specimen/Open+Sans -->
+    <link rel="stylesheet" href="css/fontawesome.css">
+    <!-- https://fontawesome.com/ -->
+    <link rel="stylesheet" href="css/fullcalendar.min.css">
+    <!-- https://fullcalendar.io/ -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- https://getbootstrap.com/ -->
+    <link rel="stylesheet" href="css/tooplate.css">
+</head>
+<script src="js/jquery-3.3.1.min.js"></script>
+<!-- https://jquery.com/download/ -->
+<script src="js/moment.min.js"></script>
+<!-- https://momentjs.com/ -->
+<script src="js/utils.js"></script>
+<script src="js/Chart.min.js"></script>
+<!-- http://www.chartjs.org/docs/latest/ -->
+<script src="js/fullcalendar.min.js"></script>
+<!-- https://fullcalendar.io/ -->
+<script src="js/bootstrap.min.js"></script>
+<!-- https://getbootstrap.com/ -->
+<script src="js/tooplate-scripts.js"></script>
+<script src="js/jquery.blockUI.js"></script>
+<script type="text/javascript">
+    /*let ctxLine,
+        ctxBar,
+        ctxPie,
+        optionsLine,
+        optionsBar,
+        optionsPie,
+        configLine,
+        configBar,
+        configPie,
+        lineChart;
+    barChart, pieChart;*/
+    // DOM is ready
+    $(function () {
+        /*updateChartOptions();
+        drawLineChart(); // Line Chart
+        drawBarChart(); // Bar Chart
+        drawPieChart(); // Pie Chart
+        drawCalendar(); // Calendar
+        */
+        $(window).resize(function () {
+            //updateChartOptions();
+            //updateLineChart();
+            //updateBarChart();
+            reloadPage();
+        });
+    })
+</script>
+<script type="text/javascript">
+    function SetTextAD() {
+        $("#txtLoginWay").html("請使用您的開機帳號及密碼(AD帳密)登入");
+        $("#txtAccount").attr("placeholder", "開機帳號(AA\\randy.tung)");
+        $("#txtPassword").attr("placeholder", "開機密碼(1234)");
+    }
+    function SetTextLDAP() {
+        $("#txtLoginWay").html("請使用您的LDAP帳號及密碼登入");
+        $("#txtAccount").attr("placeholder", "E-mail(randy.tung@aaa.com)");
+        $("#txtPassword").attr("placeholder", "密碼(1234)");
+    }
+    /*
+    function login(){
+        var loginWay="";
+        if($("#rbAD":checked).length>0){
+            loginWay="1";
+
+        }else{
+            loginWay="3";
+        }
+        $.ajax({
+            url: "https://websys.gigabyte.com/GSSO/api/AuthApiForWeb",
+            type: 'POST',
+            dataType: 'json',
+            data: { LoginType: $("#selType").val(), DomainName: $("#txtAD").val(), UserAccount: $("#txtAccount1").val(), UserPwd: $("#txtPasword1").val() },
+            beforeSend: function (xhr) { xhr.setRequestHeader('Authorization', 'basic VVNBX0NNUzo1NjQ3ODk='); },
+                success: function (d) {
+                    if (d.AuthKey == "") {
+                        $("#lblMsg").show();
+                        $("#txtPasword1").val("");
+                    } else {
+                        $("#txtAuthKey").val(d.AuthKey);
+                        //已登入
+                        $.post("./DataHandler",{Function :  "login" , Key : d.AuthKey},function(data,result){
+
+
+                            window.location="./index";
+
+                        });
+                    }
+
+                        //document.getElementById("postform").reset();
+               },
+               error: function (d) {
+                   alert(d.message);
+                    //alert("Error please try again");
+                }
+            });
+
+
+    }
+    */
+</script>
+<body class="bg03">
+    <div class="container">
+        <div class="row tm-mt-big">
+            <div class="col-12 mx-auto tm-login-col">
+                <div class="bg-white tm-block">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <i class="fas fa-3x fa-tachometer-alt tm-site-icon text-center"></i>
+                        </div>
+                    </div>
+                    <form action="./Login" method="post" class="tm-login-form">
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <div class="bg-white" style="display:inline-block">
+                                    <h2 class="tm-block-title mt-3">
+                                        <input type="radio" id="rbAD" name="drone" value="1" checked onclick="SetTextAD();">
+                                        <label for="huey">AD</label>
+                                        <input type="radio" id="rbLDAP" name="drone" value="3" onclick="SetTextLDAP();">
+                                        <label for="dewey">LDAP</label>
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h2 class="tm-block-title mt-3" id="txtLoginWay">請使用您的開機帳號及密碼(AD帳密)登入</h2>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+
+                            <div class="col-12">
+
+                                <div class="input-group">
+                                    <label for="username" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">使用者帳號</label>
+                                    <input name="txtAccount" type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" id="txtAccount" value="" placeholder="開機帳號(AA\randy.tung)" required>
+                                </div>
+                                <div class="input-group mt-3">
+                                    <label for="password" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">密碼</label>
+                                    <input name="txtPassword" type="password" class="form-control validate" id="txtPassword" required placeholder="開機密碼(1234)">
+                                </div>
+                                <div class="input-group mt-3">
+                                    <button type="submit" class="btn btn-primary d-inline-block mx-auto">Login</button>
+                                </div>
+
+                                <input type="text" value="login" id="Function" name="Function" style="display:none">
+                                <input type="text" value="Q" id="Way" name="Way" style="display:none">
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer class="row tm-mt-big">
+            <div class="col-12 font-weight-light text-center">
+                <p class="d-inline-block tm-bg-black text-white py-2 px-4">
+                    XX科技 資訊安全登記系統
+                </p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

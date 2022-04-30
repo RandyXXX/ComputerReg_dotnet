@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace ComputerReg.Controllers
 {
-    public class HomeController : Controller
+    public class StartController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<StartController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public StartController(ILogger<StartController> logger)
         {
             _logger = logger;
         }
