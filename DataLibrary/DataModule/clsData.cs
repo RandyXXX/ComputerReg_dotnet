@@ -977,5 +977,91 @@ namespace DataLibrary
         }
 
         #endregion
+        #region "Category"
+        public DataTable QryCategory()
+        {
+            string strSQL = "SELECT * FROM vw_menu ORDER BY BigSeq,MasterNo,SeqNo";
+
+            return pub_lib.Query(strSQL).Tables[0];
+        }
+        public bool AddCategory(string PrgPath, string CategoryDesc, string PrgName, string MasterNo, string SeqNo, ref string strErrMsg)
+        {
+            string[,] V_arr = new string[5, 2];
+            string strSQL = "INSERT INTO Category(PrgPath, CategoryDesc, PrgName, MasterNo, SeqNo) VALUES (@PrgPath, @CategoryDesc, @PrgName, @MasterNo, @SeqNo)";
+
+            V_arr[0, 0] = "@PrgPath";
+            V_arr[0, 1] = PrgPath;
+
+            V_arr[1, 0] = "@CategoryDesc";
+            V_arr[1, 1] = CategoryDesc;
+
+            V_arr[2, 0] = "@PrgName";
+            V_arr[2, 1] = PrgName;
+
+            V_arr[3, 0] = "@MasterNo";
+            V_arr[3, 1] = MasterNo;
+
+            V_arr[4, 0] = "@SeqNo";
+            V_arr[4, 1] = SeqNo;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        public bool UpdCategory(string PrgSerNo,string PrgPath, string CategoryDesc, string PrgName, string MasterNo, string SeqNo, ref string strErrMsg) {
+
+            string[,] V_arr = new string[6, 2];
+         string   strSQL = "UPDATE Category SET PrgPath=@PrgPath , CategoryDesc=@CategoryDesc , PrgName=@PrgName , MasterNo=@MasterNo, SeqNo=@SeqNo WHERE PrgSerNo=@PrgSerNo ";
+
+            V_arr[0, 0] = "@PrgPath";
+            V_arr[0, 1] = PrgPath;
+
+            V_arr[1, 0] = "@CategoryDesc";
+            V_arr[1, 1] = CategoryDesc;
+
+            V_arr[2, 0] = "@PrgName";
+            V_arr[2, 1] = PrgName;
+
+            V_arr[3, 0] = "@MasterNo";
+            V_arr[3, 1] = MasterNo;
+
+            V_arr[4, 0] = "@SeqNo";
+            V_arr[4, 1] = SeqNo;
+
+            V_arr[5, 0] = "@PrgSerNo";
+            V_arr[5, 1] = PrgSerNo;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool DelCategory(string PrgSerNo, ref string strErrMsg)
+        {
+            string[,] V_arr = new string[1, 2];
+
+            string strSQL = "DELETE  Category   WHERE PrgSerNo=@PrgSerNo";
+
+
+            V_arr[0, 0] = "@PrgSerNo";
+            V_arr[0, 1] = PrgSerNo;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        public DataTable Q1Category(string PrgSerNo)
+        {
+            string[,] V_arr = new string[1, 2];
+
+            string strSQL = "SELECT * FROM  Category where PrgSerNo=@PrgSerNo";
+
+
+            V_arr[0, 0] = "@PrgSerNo";
+            V_arr[0, 1] = PrgSerNo;
+
+            return pub_lib.Query(strSQL, V_arr).Tables[0]; 
+        }
+        public DataTable QueryMenuCategory()
+        {
+            string strSQL = "SELECT * FROM  Category where MasterNo=-1 ORDER BY SeqNo";
+            return pub_lib.Query(strSQL).Tables[0];
+        }
+        #endregion
+
     }
 }

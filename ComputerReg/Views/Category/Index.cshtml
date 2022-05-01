@@ -1,1 +1,323 @@
-﻿
+﻿@*
+    Category 頁
+*@
+@section scripts{
+<script type="text/javascript">
+		     $(document).ready(function () {
+				SaveData('QRY');
+			 });
+
+	function PreAdd() {
+		var w = $(window).width();
+		$.post("/Category",{Way: "GetMenu",ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			var Ii =0;
+            var Datas={};
+            var Htmls="";
+			Datas=JSON.parse(data.data);
+			//先全砍
+			$("#selMasterNoA option[value!='-1']").remove();
+			//再欣增
+			for(Ii=0;Ii<Datas.length;Ii++){
+				$("#selMasterNoA").append(new Option(Datas[Ii].PrgName, Datas[Ii].PrgSerNo));
+			}
+			$.blockUI({
+                message: $("#divAdd"),
+                css: {
+						top:'20px',
+						width:'60%',
+						cursor: "default",
+						border: 'none',
+						left: w/4
+					},
+					onOverlayClick: $.unblockUI
+				});
+			});
+		
+	}
+	function PreUpd(id){
+		$("#txtID").val(id);
+		var w = $(window).width();
+		$.post("/Category",{ Way: "GetMenu",ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			var Ii =0;
+            var Datas={};
+            var Datas2={};
+            var Htmls="";
+			Datas=JSON.parse(data.data);
+			//先全砍
+			$("#selMasterNoU option[value!='-1']").remove();
+			//再欣增
+			for(Ii=0;Ii<Datas.length;Ii++){
+				$("#selMasterNoU").append(new Option(Datas[Ii].PrgName, Datas[Ii].PrgSerNo));
+			}
+			$.post("/Category",{Function : "Category" , Way: "Q1",PrgSerNo:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+				Datas2=JSON.parse(data.data);
+                $("#selMasterNoU").val(Datas2[0].MasterNo);
+				$("#txtPrgNameU").val(Datas2[0].PrgName);
+				$("#txtCategoryDescU").val(Datas2[0].CategoryDesc);
+				$("#txtPrgPathU").val(Datas2[0].PrgPath);
+				$("#txtSeqU").val(Datas2[0].SeqNo);
+			
+				$.blockUI({
+                message: $("#divUpd"),
+                css: {
+							top:'20px',
+							width:'60%',
+							cursor: "default",
+							border: 'none',
+							left: w/4
+						},
+						onOverlayClick: $.unblockUI
+					});
+				});
+			});
+
+
+
+			
+	}
+	function PreDel(id){
+		if(confirm("您確定要刪除這筆資料？")){
+			$("#txtID").val(id);
+			SaveData('DEL');
+		}
+	}
+
+
+	function SaveData(Type){
+		var MasterNo="";
+		var PrgName="";
+		var CategoryDesc="";
+		var PrgPath="";
+		var Seq="";
+		var id="";
+		switch (Type) {
+			case "ADD":
+				MasterNo=$("#selMasterNoA").val();
+				PrgName=$("#txtPrgNameA").val();
+				CategoryDesc=$("#txtCategoryDescA").val();
+				PrgPath=$("#txtPrgPathA").val();
+				Seq=$("#txtSeqA").val();
+				//alert("master no" + MasterNo);
+			break;			
+			case "UPD":
+				MasterNo=$("#selMasterNoU").val();
+				PrgName=$("#txtPrgNameU").val();
+				CategoryDesc=$("#txtCategoryDescU").val();
+				PrgPath=$("#txtPrgPathU").val();
+				Seq=$("#txtSeqU").val();
+				id=$("#txtID").val();
+			break;
+			case "QRY":
+			
+			break;
+			default:
+				id=$("#txtID").val();
+
+		}
+			
+		$.post("/Category",{Way: Type ,MasterNo:MasterNo,PrgName:PrgName,CategoryDesc:CategoryDesc,PrgPath:PrgPath,Seq:Seq,PrgSerNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			if(Type=="QRY"){
+				    var Ii =0;
+                    var Datas={};
+                    var Htmls="";
+					$("tr[id^='tr_']").each(function(int,total){
+						$(this).remove();	
+					});
+				    Datas=JSON.parse(data.data);
+                    for(Ii=0;Ii<Datas.length;Ii++){
+                        Htmls=Htmls+"<tr id='tr_"+ Ii +"' >";
+                        Htmls=Htmls+"<td ><i class=\"fas fa-trash-alt tm-trash-icon\" onclick=\"PreDel('"+ Datas[Ii].PrgSerNo +"')\"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fas fa-file-alt tm-file-icon\" style=\"cursor: pointer;\" onclick=\"PreUpd('"+ Datas[Ii].PrgSerNo +"')\"></i></td>";
+                        if(Datas[Ii].MasterNo==-1){
+                            Htmls=Htmls+"<td >目錄</td>";
+                        }else{
+                            Htmls=Htmls+"<td >程式</td>";
+                        }
+                           
+                        Htmls=Htmls+"<td >"+ Datas[Ii].PrgName +"</td>";
+                        Htmls=Htmls+"<td >"+ Datas[Ii].PrgPath +"</td>";
+                        Htmls=Htmls+"<td >"+ Datas[Ii].CategoryDesc +"</td>";
+                        Htmls=Htmls+"<td >"+ Datas[Ii].SeqNo +"</td>";
+                        Htmls=Htmls+"</tr>";
+                    }
+                    $('#Table  tbody').append(Htmls);
+			}else{
+				Cancel();
+				SaveData('QRY');
+			}
+		
+		});
+
+	}
+	function Cancel(){
+		$.unblockUI();
+	}
+</script>
+}
+		   @*新增開始*@
+		   <input type="text" id="txtID" style="display:none" />
+		  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8"  id="divAdd" style="display:none">
+                <div class="bg-white tm-block">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="tm-block-title d-inline-block">新增</h2>
+                        </div>
+                    </div>
+                    <div class="row mt-4 tm-edit-product-row">
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                            
+                                <div class="input-group mb-12">
+                                    <label for="name" class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-form-label">目錄/程式
+                                    </label>
+                                    <select id="selMasterNoA"  ><option value='-1'>主目錄</option></select>
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">名稱</label>
+                                  <input   id="txtPrgNameA" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">說明</label>
+                                  <input   id="txtCategoryDescA" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="txtPrgPathA" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">路徑
+                                    </label>
+                                    <input id="txtPrgPathA"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="txtSeqA" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">順序
+                                    </label>
+                                    <input id="txtSeqA"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+                                        <!--<input type="button" class="btn btn-primary" onclick="SaveData('A');">新增-->
+										<button  type="submit" class="btn btn-primary" onclick="SaveData('ADD');">新增
+										</div><div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+										<button  type="submit" class="btn btn-primary" onclick="Cancel()">取消
+                                        </button>
+                                    </div>
+                                </div>
+                          
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            @*新增結束*@
+			@*修改開始*@
+				 <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8"  id="divUpd" style="display:none">
+                <div class="bg-white tm-block">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="tm-block-title d-inline-block">修改</h2>
+                        </div>
+                    </div>
+                    <div class="row mt-4 tm-edit-product-row">
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                            
+                                <div class="input-group mb-12">
+                                    <label for="name" class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-form-label">目錄/程式
+                                    </label>
+                                    <select id="selMasterNoU"  ><option value='-1'>主目錄</option></select>
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">名稱</label>
+                                  <input   id="txtPrgNameU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">說明</label>
+                                  <input   id="txtCategoryDescU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="txtPrgPathU" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">路徑
+                                    </label>
+                                    <input id="txtPrgPathU"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <label for="txtSeqU" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">順序
+                                    </label>
+                                    <input id="txtSeqU"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                                </div>
+                                <div class="input-group mb-12">
+                                    <div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+                                        <!--<input type="button" class="btn btn-primary" onclick="SaveData('A');">新增-->
+										<button  type="submit" class="btn btn-primary" onclick="SaveData('UPD');">修改
+										</div><div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+										<button  type="submit" class="btn btn-primary" onclick="Cancel()">取消
+                                        </button>
+                                    </div>
+                                </div>
+                          
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+		  @*修改結束*@
+		  @*主程式開始*@
+                 <div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-col">
+                    <div class="bg-white tm-block h-100">
+                        <div class="row">
+                            <div class="col-md-8 col-sm-12">
+                                <h2 class="tm-block-title d-inline-block">目錄&程式清單</h2>
+
+                            </div>
+                            <div class="col-md-4 col-sm-12 text-right">
+                                <a href="#" class="btn btn-small btn-primary" onclick="PreAdd()">新增目錄/程式</a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped tm-table-striped-even mt-3" id="Table">
+                                <thead>
+                                    <tr class="tm-bg-gray">
+                                        <th scope="col">刪除/修改</th>
+                                        <th scope="col">目錄/程式</th>
+                                        <th scope="col" >名稱</th>
+                                        <th scope="col" >路徑</th>
+                                        <th scope="col">備註</th>
+										<th scope="col">順序</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+								<!--
+                                    <tr>
+                                        <th scope="row">
+                                            <input type="checkbox" aria-label="Checkbox">
+                                        </th>
+                                        <td class="tm-product-name">1. In malesuada placerat (hover)</td>
+                                        <td class="text-center">145</td>
+                                        <td class="text-center">255</td>
+                                        <td>2018-10-28</td>
+                                        <td><i class="fas fa-trash-alt tm-trash-icon"></i></td>
+                                    </tr>
+									-->
+                                 
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tm-table-mt tm-table-actions-row" style="display:none">
+                            <div class="tm-table-actions-col-left">
+                                <button class="btn btn-danger">Delete Selected Items</button>
+                            </div>
+                            <div class="tm-table-actions-col-right" style="display:none">
+                                <span class="tm-pagination-label">Page</span>
+                                <nav aria-label="Page navigation" class="d-inline-block">
+                                    <ul class="pagination tm-pagination">
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <span class="tm-dots d-block">...</span>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#">13</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">14</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			@*主程式結束*@
+

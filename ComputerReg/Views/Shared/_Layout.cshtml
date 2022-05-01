@@ -164,15 +164,15 @@
             var Fir = {};
             var Sec = {};
             var Menu = {};
-            var ServerKey;
-            var fingerprint="";//瀏覽器指紋
+            //var ServerKey;
+            //var fingerprint="";//瀏覽器指紋
             //檢查有無ServerKey
-            ServerKey=window.localStorage.getItem("ServerKey");
+            //ServerKey=window.localStorage.getItem("ServerKey");
             if(ServerKey==null){
                 ServerKey="";
             }
             //取得指紋
-            fingerprint=new Fingerprint().get();
+            //fingerprint=new Fingerprint().get();
             //就算有，檢查是否偽造
             $.ajax({
                 url: '/login',

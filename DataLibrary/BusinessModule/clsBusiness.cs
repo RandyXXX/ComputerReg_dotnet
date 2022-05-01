@@ -419,11 +419,41 @@ namespace DataLibrary
         }
         public bool DELGU(string SerNo, ref string strErrMsg)
         {
-            return clsdata.DELGU(SerNo, ref strErrMsg); 
+            return clsdata.DELGU(SerNo, ref strErrMsg);
         }
         public DataTable Q1UserGroup(string SeqNo)
         {
-            return clsdata.Q1UserGroup(SeqNo);  
+            return clsdata.Q1UserGroup(SeqNo);
+        }
+        #endregion
+        #region "Category"
+        public DataTable QryCategory()
+        {
+            return clsdata.QryCategory();
+        }
+        public bool AddCategory(string PrgPath, string CategoryDesc, string PrgName, string MasterNo, string SeqNo, ref string strErrMsg)
+        {
+            return clsdata.AddCategory(PrgPath, CategoryDesc, PrgName, MasterNo, SeqNo, ref strErrMsg);
+
+        }
+        public bool UpdCategory(string PrgSerNo, string PrgPath, string CategoryDesc, string PrgName, string MasterNo, string SeqNo, ref string strErrMsg)
+        {
+            return clsdata.UpdCategory(PrgSerNo, PrgPath, CategoryDesc, PrgName, MasterNo, SeqNo, ref strErrMsg);
+
+        }
+        public bool DelCategory(string PrgSerNo, ref string strErrMsg)
+        {
+            return clsdata.DelCategory(PrgSerNo, ref strErrMsg);
+
+        }
+        public DataTable Q1Category(string PrgSerNo)
+        {
+            return clsdata.Q1Category(PrgSerNo);
+
+        }
+        public DataTable QueryMenuCategory()
+        {
+            return clsdata.QueryMenuCategory();
         }
         #endregion
     }
