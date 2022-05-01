@@ -10,7 +10,7 @@ namespace DataLibrary
     {
         private string strCN1;
         PUB_LIB pub_lib;
-     
+
         /// <summary>
         ///     ''' 建構子，告知連線字串
         ///     ''' </summary>
@@ -21,9 +21,9 @@ namespace DataLibrary
             strCN1 = strCn;
             pub_lib = new PUB_LIB(strCN1);
 
-          
+
         }
-        
+
 
         #region Menu
         public DataTable GetPrgInfo(string strFileName)
@@ -804,11 +804,11 @@ namespace DataLibrary
         #endregion
 
         #region "登入"
-        public DataTable LoginAD(string AD,string Account,string Pass)
+        public DataTable LoginAD(string AD, string Account, string Pass)
         {
             string[,] V_arr = new string[3, 2];
-            string    strSQL = "SELECT a.id, a.AD, a.Account, a.stats,(SELECT TOP 1 b.USER_Name FROM [EHR].[dbo].[vw_ADDRESS_BOOK2] b WHERE  b.AD_Domain_Name=a.AD AND b.AD_Account=a.Account ) Real_Name, a.Pass, a.E_mail FROM User_Data a WHERE a.AD=@AD AND a.Account=@Account AND a.Pass=@Pass AND a.stats='00'";
-            
+            string strSQL = "SELECT a.id, a.AD, a.Account, a.stats,(SELECT TOP 1 b.USER_Name FROM [EHR].[dbo].[vw_ADDRESS_BOOK2] b WHERE  b.AD_Domain_Name=a.AD AND b.AD_Account=a.Account ) Real_Name, a.Pass, a.E_mail FROM User_Data a WHERE a.AD=@AD AND a.Account=@Account AND a.Pass=@Pass AND a.stats='00'";
+
             V_arr[0, 0] = "@AD";
             V_arr[0, 1] = AD;
 
@@ -818,7 +818,7 @@ namespace DataLibrary
             V_arr[2, 0] = "@Pass";
             V_arr[2, 1] = Pass;
 
-            return pub_lib.Query(strSQL, V_arr).Tables[0];  
+            return pub_lib.Query(strSQL, V_arr).Tables[0];
         }
         public DataTable LoginLDAP(string E_mail, string Pass)
         {
@@ -826,7 +826,7 @@ namespace DataLibrary
             string strSQL = "SELECT a.id, a.AD, a.Account, a.stats,(SELECT TOP 1 b.USER_Name FROM [EHR].[dbo].[vw_ADDRESS_BOOK2] b WHERE  b.E_Mail1=a.E_mail  ) Real_Name, a.Pass, a.E_mail  FROM User_Data WHERE E_mail=@E_mail AND  Pass=@Pass  AND stats='00'";
 
             V_arr[0, 0] = "@E_mail";
-            V_arr[0, 1] = E_mail;        
+            V_arr[0, 1] = E_mail;
 
             V_arr[1, 0] = "@Pass";
             V_arr[1, 1] = Pass;
@@ -841,9 +841,9 @@ namespace DataLibrary
 
             return pub_lib.Query(strSQL).Tables[0];
         }
-        public bool AddGroup(string GROUPNO,string GroupDesc,string GroupName,ref string  strErrMsg)
+        public bool AddGroup(string GROUPNO, string GroupDesc, string GroupName, ref string strErrMsg)
         {
-            string[,] V_arr=new string[3,2]; 
+            string[,] V_arr = new string[3, 2];
             string strSQL = "INSERT INTO UserGroup (GROUPNO, GroupName, GroupDesc ) VALUES (@GROUPNO, @GroupName, @GroupDesc)";
             V_arr[0, 0] = "@GROUPNO";
             V_arr[0, 1] = GROUPNO;
@@ -854,10 +854,10 @@ namespace DataLibrary
             V_arr[2, 0] = "@GroupDesc";
             V_arr[2, 1] = GroupName;
 
-            return pub_lib.ExecSQL(strSQL, V_arr,ref strErrMsg);
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
 
         }
-        public bool UPDGroup(string SeqNo,string GROUPNO, string GroupDesc, string GroupName, ref string strErrMsg)
+        public bool UPDGroup(string SeqNo, string GROUPNO, string GroupDesc, string GroupName, ref string strErrMsg)
         {
             string[,] V_arr = new string[4, 2];
             string strSQL = "UPDATE UserGroup SET GROUPNO =@GROUPNO , GroupName=@GroupName, GroupDesc=@GroupDesc  WHERE SeqNo=@SeqNo";
@@ -876,7 +876,7 @@ namespace DataLibrary
             return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
 
         }
-        public bool DELGroup(string SeqNo,ref string strErrMsg)
+        public bool DELGroup(string SeqNo, ref string strErrMsg)
         {
             string[,] V_arr = new string[1, 2];
             string strSQL = "DELETE UserGroup WHERE SeqNo=@SeqNo";
@@ -886,14 +886,94 @@ namespace DataLibrary
 
             return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
 
-        } 
-        public DataTable QRYGroup(string GROUPNO)
+        }
+        public DataSet QRYGP(string GROUPNO)
         {
-
+            string[,] V_arr = new string[1, 2];
             string strSQL = "SELECT a.Seqno ID,b.*,CASE WHEN b.MasterNo=-1 THEN '目錄' ELSE '程式' END TypeDesc FROM GroupToPrg a, Category b WHERE a.PrgSerNo=b.PrgSerNo AND a.GROUPNO=@GROUPNO ORDER BY b.SeqNo";
+            V_arr[0, 0] = "@GROUPNO";
+            V_arr[0, 1] = GROUPNO;
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+            DataSet ds = new DataSet();
+            dt1 = pub_lib.Query(strSQL, V_arr).Tables[0];
+            dt1.TableName = "AllDatas";
+            strSQL = "SELECT b.*,CASE WHEN b.MasterNo=-1 THEN '目錄' ELSE '程式' END TypeDesc,  CASE WHEN b.MasterNo=-1 THEN  SeqNo ELSE (SELECT TOP 1 a.SeqNo FROM Category a WHERE a.PrgSerNo=b.MasterNo) END BigSeq FROM Category b WHERE 1=1 AND PrgSerNo NOT IN ( SELECT PrgSerNo FROM GroupToPrg WHERE GROUPNO=@GROUPNO)  ORDER BY  BigSeq DESC ,MasterNo ASC,SeqNo  DESC";
+
+            dt2 = pub_lib.Query(strSQL, V_arr).Tables[0];
+            dt2.TableName = "PartDatas";
+            ds.Tables.Add(dt1.Copy());
+            ds.Tables.Add(dt2.Copy());
+            return ds;
+
+        }
+        public bool AddGP(string PrgSerNo, string GROUPNO, ref string strErrMsg)
+        {
+            string strSQL = "INSERT INTO GroupToPrg (PrgSerNo,GROUPNO) VALUES (@PrgSerNo,@GROUPNO)";
+            string[,] V_arr = new string[2, 2];
+            V_arr[0, 0] = "@PrgSerNo";
+            V_arr[0, 1] = PrgSerNo;
+
+            V_arr[1, 0] = "@GROUPNO";
+            V_arr[1, 1] = GROUPNO;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool DelGP(string SeqNo, ref string strErrMsg)
+        {
+            string strSQL = "DELETE GroupToPrg WHERE Seqno=@SeqNo";
+            string[,] V_arr = new string[1, 2];
+            V_arr[0, 0] = "@SeqNo";
+            V_arr[0, 1] = SeqNo;
 
 
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
 
+        }
+        public DataTable QRYGU(string GROUPNO)
+        {
+            string strSQL = "SELECT * FROM GroupToUser  WHERE GROUPNO=@GROUPNO ORDER BY Serno";
+            string[,] V_arr = new string[1, 2];
+            V_arr[0, 0] = "@GROUPNO";
+            V_arr[0, 1] = GROUPNO;
+            return pub_lib.Query(strSQL, V_arr).Tables[0];
+        }
+        public bool ADDGU(string GROUPNO, string EMPNO, string AD, ref string strErrMsg)
+        {
+            string strSQL = "INSERT INTO GroupToUser (EMPNO,GROUPNO,AD) VALUES (@EMPNO,@GROUPNO,@AD)";
+            string[,] V_arr = new string[3, 2];
+            V_arr[0, 0] = "@EMPNO";
+            V_arr[0, 1] = EMPNO;
+
+            V_arr[1, 0] = "@GROUPNO";
+            V_arr[1, 1] = GROUPNO;
+
+            V_arr[2, 0] = "@AD";
+            V_arr[2, 1] = AD;
+
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool DELGU(string SerNo, ref string strErrMsg)
+        {
+            string strSQL = "DELETE GroupToUser WHERE Serno=@SerNo";
+            string[,] V_arr = new string[1, 2];
+            V_arr[0, 0] = "@SerNo";
+            V_arr[0, 1] = SerNo;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public DataTable Q1UserGroup(string SeqNo)
+        {
+            string strSQL = "SELECT * FROM UserGroup WHERE SeqNo=@SeqNo";
+            string[,] V_arr = new string[1, 2];
+            V_arr[0, 0] = "@SeqNo";
+            V_arr[0, 1] = SeqNo;
+
+            return pub_lib.Query(strSQL, V_arr).Tables[0];
         }
 
         #endregion

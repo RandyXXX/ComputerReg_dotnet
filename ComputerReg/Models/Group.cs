@@ -1,14 +1,18 @@
-﻿/// <summary>
+﻿using Newtonsoft.Json.Linq;
+/// <summary>
 /// 傳進去的
 /// </summary>
-    public class inGroup
+public class inGroup
     {
     //public string Function { set; get; }
+    public string PrgSerNo { set; get; }
     public string Way { set; get; }
     public string GROUPNO { set; get; }
     public string GroupName { set; get; }
     public string GroupDesc { set; get; }
     public string SeqNo { set; get; }
+    public string EMPNO { set; get; }
+    public string AD { set; get; }
     public string ServerKey { set; get; }
     public string fingerprint { set; get; }
 

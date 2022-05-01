@@ -13,8 +13,8 @@ namespace DataLibrary
         {
             clsdata = new clsData(strCn);
         }
-   
-        
+
+
 
         #region Code_d
 
@@ -368,7 +368,7 @@ namespace DataLibrary
         //}
         #endregion
         #region "登入"
-        public DataTable Login(string Type,string AD,string Account,string Pass)
+        public DataTable Login(string Type, string AD, string Account, string Pass)
         {
             if (Type.Equals("1"))
             {
@@ -378,6 +378,52 @@ namespace DataLibrary
             {
                 return clsdata.LoginLDAP(Account, Pass);
             }
+        }
+        #endregion
+        #region "Group"
+        public DataTable QueryAllGroup()
+        {
+            return clsdata.QueryAllGroup();
+        }
+        public bool AddGroup(string GROUPNO, string GroupDesc, string GroupName, ref string strErrMsg)
+        {
+            return clsdata.AddGroup(GROUPNO, GroupDesc, GroupName, ref strErrMsg);
+        }
+        public bool UPDGroup(string SeqNo, string GROUPNO, string GroupDesc, string GroupName, ref string strErrMsg)
+        {
+            return clsdata.UPDGroup(SeqNo, GROUPNO, GroupDesc, GroupName, ref strErrMsg);
+        }
+        public bool DELGroup(string SeqNo, ref string strErrMsg)
+        {
+            return clsdata.DELGroup(SeqNo, ref strErrMsg);
+        }
+        public DataSet QRYGP(string GROUPNO)
+        {
+            return clsdata.QRYGP(GROUPNO);
+        }
+        public bool AddGP(string PrgSerNo, string GROUPNO, ref string strErrMsg)
+        {
+            return clsdata.AddGP(PrgSerNo, GROUPNO, ref strErrMsg);
+        }
+        public bool DelGP(string SeqNo, ref string strErrMsg)
+        {
+            return clsdata.DelGP(SeqNo, ref strErrMsg);
+        }
+        public DataTable QRYGU(string GROUPNO)
+        {
+            return clsdata.QRYGU(GROUPNO);
+        }
+        public bool ADDGU(string GROUPNO, string EMPNO, string AD, ref string strErrMsg)
+        {
+            return clsdata.ADDGU(GROUPNO, EMPNO, AD, ref strErrMsg);
+        }
+        public bool DELGU(string SerNo, ref string strErrMsg)
+        {
+            return clsdata.DELGU(SerNo, ref strErrMsg); 
+        }
+        public DataTable Q1UserGroup(string SeqNo)
+        {
+            return clsdata.Q1UserGroup(SeqNo);  
         }
         #endregion
     }

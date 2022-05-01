@@ -1,6 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
+    
+ 
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,6 +29,7 @@
 </head>
 
 <body id="reportsPage">
+    
     <div class="" id="home">
         <div class="container">
             <div id="divMenu" class="row">
@@ -108,7 +111,7 @@
             </footer>
         </div>
     </div>
-    <script src="js/jquery-3.3.1.min.js"></script>
+       <script src="js/jquery-3.3.1.min.js"></script>
     <!-- https://jquery.com/download/ -->
     <script src="js/moment.min.js"></script>
     <!-- https://momentjs.com/ -->
@@ -120,8 +123,11 @@
     <script src="js/bootstrap.min.js"></script>
     <!-- https://getbootstrap.com/ -->
     <script src="js/tooplate-scripts.js"></script>
+    <script src="js/jquery.blockUI.js"></script>
     <script type="text/javascript" src="js/fingerprint.js"></script>
     <script>
+        var ServerKey=window.localStorage.getItem("ServerKey");
+        var fingerprint=new Fingerprint().get();
         let ctxLine,
             ctxBar,
             ctxPie,
@@ -272,6 +278,7 @@
 });*/
 
     </script>
-
+    @RenderSection("scripts", required: false)
+    
 </body>
 </html>

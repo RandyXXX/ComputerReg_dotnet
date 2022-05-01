@@ -1,477 +1,487 @@
 ﻿@*
-Group 群組頁
+    Group 群組頁
 *@
-<script type="text/javascript">
-		     $(document).ready(function () {
-				SaveData('QRY');
-			 });
-</script>
+@section scripts{
 <script type="text/javascript">
 
-	function PreAddEmp(){
-		var empno=$("#txtEmpnoA").val();
-		var GROUPNO=$("#txtID").val();
-		var AD=$("#txtADA").val();
-		$.post("/Group",{Function : "Group" , Way: "ADDGU",GROUPNO: GROUPNO,EMPNO:empno ,AD:AD},function(data,result){
-			ModifyGroupUser(GROUPNO);
-			$("#txtEmpnoA").val("");
-		
-		})
+    $(document).ready(function () {
+       SaveData('QRY');
+
+    });
+    function PreAddEmp(){
+        var empno=$("#txtEmpnoA").val();
+        var GROUPNO=$("#txtID").val();
+        var AD=$("#txtADA").val();
+        $.post("/Group",{Way: "ADDGU",GROUPNO: GROUPNO,EMPNO:empno ,AD:AD,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            ModifyGroupUser(GROUPNO);
+            $("#txtEmpnoA").val("");
+
+        })
 
 
-	}
-	function PreGroupUser(id){
-		var GroupID=$("#txtID").val();
-		$.post("./Group",{Function : "Group" , Way: "DELGU",SeqNo:id},function(data,result){
-			ModifyGroupUser(GroupID);
-		
-		
-		});
-	
-	}
-
-	function PreGroupPrg(id){
-		var GroupID=$("#txtID").val();
-		$.post("/Group",{Function : "Group" , Way: "DELGP",SeqNo:id},function(data,result){
-			ModifyGroupPrg(GroupID);
-		
-		
-		});
-	
-	}
-	function PreAddPrg(){
-		var GroupID=$("#txtID").val();
-		var PrgID=$("#selPrg").val();
+    }
+    function PreGroupUser(id){
+        var GroupID=$("#txtID").val();
+        $.post("./Group",{Way: "DELGU",SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            ModifyGroupUser(GroupID);
 
 
-		$.post("/Group",{Function : "Group" , Way: "ADDGP",PrgSerNo:PrgID , GROUPNO : GroupID},function(data,result){
-			//Cancel();
-			ModifyGroupPrg(GroupID);
-		});
+        });
+
+    }
+
+    function PreGroupPrg(id){
+        var GroupID=$("#txtID").val();
+        $.post("/Group",{Way: "DELGP",SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            ModifyGroupPrg(GroupID);
 
 
-	}
-	function PreAdd(){
-		var w = $(window).width();
-		$.blockUI({
+        });
+
+    }
+    function PreAddPrg(){
+        var GroupID=$("#txtID").val();
+        var PrgID=$("#selPrg").val();
+
+
+        $.post("/Group",{Way: "ADDGP",PrgSerNo:PrgID , GROUPNO : GroupID,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            //Cancel();
+            ModifyGroupPrg(GroupID);
+        });
+
+
+    }
+    function PreAdd(){
+        var w = $(window).width();
+        $.blockUI({
                 message: $("#divAdd"),
                 css: {
-						top:'20px',
-						width:'60%',
-						cursor: "default",
-						border: 'none',
-						left: w/4
-					},
-					onOverlayClick: $.unblockUI
-				});
-			
-	}
-	function PreUpd(id){
-		$("#txtID").val(id);
-		var w = $(window).width();
-		$.post("/Group",{Function : "Group" , Way: "Q1",SeqNo:$("#txtID").val()},function(data,result){
-			$("#txtGROUPNOU").val(data.Data[0].GROUPNO);
-			$("#txtGroupNameU").val(data.Data[0].GroupName);
-			$("#txtGroupDescU").val(data.Data[0].GroupDesc);
+                        top:'20px',
+                        width:'60%',
+                        cursor: "default",
+                        border: 'none',
+                        left: w/4
+                    },
+                    onOverlayClick: $.unblockUI
+                });
 
-			$.blockUI({
+    }
+    function PreUpd(id){
+        $("#txtID").val(id);
+        var w = $(window).width();
+        var AA={};
+        $.post("/Group",{ Way: "Q1",SeqNo:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            
+            AA=JSON.parse(data.data);
+            $("#txtGROUPNOU").val(AA[0].GROUPNO);
+            $("#txtGroupNameU").val(AA[0].GroupName);
+            $("#txtGroupDescU").val(AA[0].GroupDesc);
+
+            $.blockUI({
                 message: $("#divUpd"),
                 css: {
-						top:'20px',
-						width:'60%',
-						cursor: "default",
-						border: 'none',
-						left: w/4
-					},
-					onOverlayClick: $.unblockUI
-				});
-			
-		
-		});
+                        top:'20px',
+                        width:'60%',
+                        cursor: "default",
+                        border: 'none',
+                        left: w/4
+                    },
+                    onOverlayClick: $.unblockUI
+                });
+
+
+        });
 
 
 
-	}
-	function PreDel(id){
-		if(confirm("您確定要刪除這筆資料？")){
-			$("#txtID").val(id);
-			SaveData('DEL');
-		}
-	}
-	
-	function ModifyGroupUser(id){
-		$("#txtID").val(id);
-		var w = $(window).width();
-		var DatasA={};
-		$.post("/Group",{Function : "Group" , Way: "QRYGU",GROUPNO:id},function(data,result){
-			var Ii =0;
+    }
+    function PreDel(id){
+        if(confirm("您確定要刪除這筆資料？")){
+            $("#txtID").val(id);
+            SaveData('DEL');
+        }
+    }
+
+    function ModifyGroupUser(id){
+        $("#txtID").val(id);
+        var w = $(window).width();
+        var DatasA={};
+        $.post("/Group",{Function : "Group" , Way: "QRYGU",GROUPNO:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            var Ii =0;
             var Htmls="";
 
-		
-			DatasA=data.Data;
-			$("tr[id^='tr_GU']").each(function(int,total){
-				$(this).remove();	
-			});
+
+            DatasA=JSON.parse(data.data);
+            $("tr[id^='tr_GU']").each(function(int,total){
+                $(this).remove();
+            });
 
             for(Ii=0;Ii<DatasA.length;Ii++){
                  Htmls=Htmls+"<tr id='tr_GU"+ Ii +"' >";
                  Htmls=Htmls+"<td ><i class=\"fas fa-trash-alt tm-trash-icon\" onclick=\"PreGroupUser('"+ DatasA[Ii].Serno +"')\"></i></td>";
-                 
+
                  Htmls=Htmls+"<td >"+ DatasA[Ii].EMPNO +"</td>";
                  Htmls=Htmls+"<td ></td>";
                  Htmls=Htmls+"<td >"+ DatasA[Ii].AD +"</td>";
-                
-			     Htmls=Htmls+"</tr>";
+
+                 Htmls=Htmls+"</tr>";
             }
             $('#TableEmp  tbody').append(Htmls);
-		
-			$.blockUI({
+
+            $.blockUI({
                 message: $("#divUserAdd"),
                 css: {
-						top:'20px',
-						width:'60%',
-						cursor: "default",
-						border: 'none',
-						left: w/4
-					},
-					onOverlayClick: $.unblockUI
-				});
-		
-		});
+                        top:'20px',
+                        width:'60%',
+                        cursor: "default",
+                        border: 'none',
+                        left: w/4
+                    },
+                    onOverlayClick: $.unblockUI
+                });
 
-	
-	}
+        });
 
 
-	function ModifyGroupPrg(GROUPNO){
-		$("#txtID").val(GROUPNO);
-		var w = $(window).width();
-		var DatasA={};
-		var DatasB={};
-		$.post("/Group",{Function : "Group" , Way: "QRYGP",GROUPNO:$("#txtID").val()},function(data,result){
-			var Ii =0;
+    }
+
+
+    function ModifyGroupPrg(GROUPNO){
+        $("#txtID").val(GROUPNO);
+        var w = $(window).width();
+        var DatasA={};
+        var DatasB={};
+        var AA={};
+        $.post("/Group",{Function : "Group" , Way: "QRYGP",GROUPNO:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            var Ii =0;
             var Htmls="";
-
-			DatasA=data.Data.PartDatas;
-			//清空
-			$("#selPrg").empty();
-			//加入
-			for(Ii=0;Ii<DatasA.length;Ii++){
-				if(DatasA[Ii].TypeDesc=="目錄"){
-					$("#selPrg").append(new Option(DatasA[Ii].PrgName, DatasA[Ii].PrgSerNo));
-				}else{
-					$("#selPrg").append(new Option("└"+ DatasA[Ii].PrgName, DatasA[Ii].PrgSerNo));
-				}
-				
-			
-			}
+            AA=JSON.parse(data.data);
+            DatasA=AA.PartDatas;
+            //清空
+            $("#selPrg").empty();
+            //加入
+            for(Ii=0;Ii<DatasA.length;Ii++){
+                if(DatasA[Ii].TypeDesc=="目錄"){
+                    $("#selPrg").append(new Option(DatasA[Ii].PrgName, DatasA[Ii].PrgSerNo));
+                }else{
+                    $("#selPrg").append(new Option("└"+ DatasA[Ii].PrgName, DatasA[Ii].PrgSerNo));
+                }
 
 
-			$("tr[id^='tr_GP']").each(function(int,total){
-				$(this).remove();	
-			});
-			DatasB=data.Data.AllDatas;
+            }
+
+
+            $("tr[id^='tr_GP']").each(function(int,total){
+                $(this).remove();
+            });
+            DatasB=AA.AllDatas;
             for(Ii=0;Ii<DatasB.length;Ii++){
                  Htmls=Htmls+"<tr id='tr_GP"+ Ii +"' >";
                  Htmls=Htmls+"<td ><i class=\"fas fa-trash-alt tm-trash-icon\" onclick=\"PreGroupPrg('"+ DatasB[Ii].ID +"')\"></i></td>";
-                 
+
                  Htmls=Htmls+"<td >"+ DatasB[Ii].TypeDesc +"</td>";
                  Htmls=Htmls+"<td >"+ DatasB[Ii].PrgName +"</td>";
                  Htmls=Htmls+"<td >"+ DatasB[Ii].CategoryDesc +"</td>";
-                
-			     Htmls=Htmls+"</tr>";
+
+                 Htmls=Htmls+"</tr>";
             }
             $('#TablePrg  tbody').append(Htmls);
 
 
-			$.blockUI({
+            $.blockUI({
                 message: $("#divPrgAdd"),
                 css: {
-						top:'20px',
-						width:'60%',
-						cursor: "default",
-						border: 'none',
-						left: w/4
-					},
-					onOverlayClick: $.unblockUI
-				});
-		
-		});
-		
-	}
-	
-	function SaveData(Type){
-		var GROUPNO="";
-		var GroupName="";
-		var GroupDesc="";
-		
-		
-		var id="";
-		switch (Type) {
-			case "ADD":
-				GROUPNO=$("#txtGROUPNOA").val();
-				GroupName=$("#txtGroupNameA").val();
-				GroupDesc=$("#txtGroupDescA").val();		
-				break;
-			case "UPD":
-				GROUPNO=$("#txtGROUPNOU").val();
-				GroupName=$("#txtGroupNameU").val();
-				GroupDesc=$("#txtGroupDescU").val();		
+                        top:'20px',
+                        width:'60%',
+                        cursor: "default",
+                        border: 'none',
+                        left: w/4
+                    },
+                    onOverlayClick: $.unblockUI
+                });
+
+        });
+
+    }
+
+    function SaveData(Type){
+        var GROUPNO="";
+        var GroupName="";
+        var GroupDesc="";
 
 
-				id=$("#txtID").val();
-				break;
-			case "QRY":
-			
-			
-				break;
-			case "DEL":
-				id=$("#txtID").val();
-			
-				break;
-			case "QRYGP":
-			
-			
-				break;
-			case "ADDGP":
+        var id="";
+        switch (Type) {
+            case "ADD":
+                GROUPNO=$("#txtGROUPNOA").val();
+                GroupName=$("#txtGroupNameA").val();
+                GroupDesc=$("#txtGroupDescA").val();
+                break;
+            case "UPD":
+                GROUPNO=$("#txtGROUPNOU").val();
+                GroupName=$("#txtGroupNameU").val();
+                GroupDesc=$("#txtGroupDescU").val();
 
 
-				break;
-			case "DELGP":
+                id=$("#txtID").val();
+                break;
+            case "QRY":
 
 
-				break;
-			case "QRYGU":
+                break;
+            case "DEL":
+                id=$("#txtID").val();
+
+                break;
+            case "QRYGP":
 
 
-				break;
-			case "ADDGU":
+                break;
+            case "ADDGP":
 
 
-				break;
-			case "DELGU":
+                break;
+            case "DELGP":
 
 
-				break;
-			default:
-				id=$("#txtID").val();
-			
-			}
-			$.post("/Group",{Function : "Group" , Way: Type ,GROUPNO : GROUPNO, GroupName : GroupName, GroupDesc : GroupDesc,SeqNo:id},function(data,result){
-				if(Type=="QRY"){
-				    var Ii =0;
+                break;
+            case "QRYGU":
+
+
+                break;
+            case "ADDGU":
+
+
+                break;
+            case "DELGU":
+
+
+                break;
+            default:
+                id=$("#txtID").val();
+
+            }
+            $.post("/Group",{Function : "Group" , Way: Type ,GROUPNO : GROUPNO, GroupName : GroupName, GroupDesc : GroupDesc,SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+                if(Type=="QRY"){
+                    var Ii =0;
                     var Datas={};
                     var Htmls="";
-					$("tr[id^='tr_']").each(function(int,total){
-						$(this).remove();	
-					});
-				    Datas=data.Data;
+                    $("tr[id^='tr_']").each(function(int,total){
+                        $(this).remove();
+                    });
+                    Datas=JSON.parse(data.data);
                     for(Ii=0;Ii<Datas.length;Ii++){
                         Htmls=Htmls+"<tr id='tr_"+ Ii +"' >";
                         Htmls=Htmls+"<td ><i class=\"fas fa-trash-alt tm-trash-icon\" onclick=\"PreDel('"+ Datas[Ii].SeqNo +"')\"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fas fa-file-alt tm-file-icon\" style=\"cursor: pointer;\" onclick=\"PreUpd('"+ Datas[Ii].SeqNo +"')\"></i></td>";
-                   
+
                         Htmls=Htmls+"<td >"+ Datas[Ii].GROUPNO +"</td>";
                         Htmls=Htmls+"<td >"+ Datas[Ii].GroupName +"</td>";
                         Htmls=Htmls+"<td >"+ Datas[Ii].GroupDesc +"</td>";
                         Htmls=Htmls+"<td ><input type=\"button\" value=\"編輯對應使用者\"  onclick=\"ModifyGroupUser('"+ Datas[Ii].GROUPNO +"')\" /></td>";
                         Htmls=Htmls+"<td ><input type=\"button\" value=\"編輯對應程式\"  onclick=\"ModifyGroupPrg('"+ Datas[Ii].GROUPNO +"')\" /></td>";
-						Htmls=Htmls+"</tr>";
+                        Htmls=Htmls+"</tr>";
                     }
                     $('#Table  tbody').append(Htmls);
-			}else{
-				Cancel();
-				SaveData('QRY');
-			}
-			
-			
-			});
+            }else{
+                Cancel();
+                SaveData('QRY');
+            }
 
-	}
+
+            });
+
+    }
     function Cancel(){
-		$.unblockUI();
-	}
+        $.unblockUI();
+    }
 </script>
+
+
+}
 <input type="text" id="txtID" style="display:none" />
 
-		   
-		  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8"  id="divAdd" style="display:none;overflow:auto;height:700px">
-                <div class="bg-white tm-block">
-                    <div class="row">
-                        <div class="col-12">
-                            <h2 class="tm-block-title d-inline-block">新增</h2>
-                        </div>
-                    </div>
-                    <div class="row mt-4 tm-edit-product-row">
-                        <div class="col-xl-12 col-lg-12 col-md-12">                           
-                                <div class="input-group mb-12">
-                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組代號</label>
-                                  <input   id="txtGROUPNOA" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-                                <div class="input-group mb-12">
-                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組名稱</label>
-                                  <input   id="txtGroupNameA" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-                                <div class="input-group mb-12">
-                                    <label for="txtPrgPathA" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">群組說明
-                                    </label>
-                                    <input id="txtGroupDescA"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-                                
-                                <div class="input-group mb-12">
-                                    <div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
-                                       
-										<button  type="submit" class="btn btn-primary" onclick="SaveData('ADD');">新增
-										</div><div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
-										<button  type="submit" class="btn btn-primary" onclick="Cancel()">取消
-                                        </button>
-                                    </div>
-                                </div>                          
-                        </div>                        
+
+<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8" id="divAdd" style="display:none;overflow:auto;height:700px">
+    <div class="bg-white tm-block">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-inline-block">新增</h2>
+            </div>
+        </div>
+        <div class="row mt-4 tm-edit-product-row">
+            <div class="col-xl-12 col-lg-12 col-md-12">
+                <div class="input-group mb-12">
+                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組代號</label>
+                    <input id="txtGROUPNOA" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                </div>
+                <div class="input-group mb-12">
+                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組名稱</label>
+                    <input id="txtGroupNameA" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                </div>
+                <div class="input-group mb-12">
+                    <label for="txtPrgPathA" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">
+                        群組說明
+                    </label>
+                    <input id="txtGroupDescA" type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                </div>
+
+                <div class="input-group mb-12">
+                    <div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+
+                        <button type="submit" class="btn btn-primary" onclick="SaveData('ADD');">新增
+                    </div><div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+                        <button type="submit" class="btn btn-primary" onclick="Cancel()">
+                            取消
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
             @*新增結束 *@
 			@*修改開始 *@
-			<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8"  id="divUpd" style="display:none;overflow:auto;height:700px">
-                <div class="bg-white tm-block">
-                    <div class="row">
-                        <div class="col-12">
-                            <h2 class="tm-block-title d-inline-block">修改</h2>
-                        </div>
-                    </div>
-                    <div class="row mt-4 tm-edit-product-row">
-                        <div class="col-xl-12 col-lg-12 col-md-12">                           
-                                <div class="input-group mb-12">
-                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組代號</label>
-                                  <input   id="txtGROUPNOU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-                                <div class="input-group mb-12">
-                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組名稱</label>
-                                  <input   id="txtGroupNameU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-                                <div class="input-group mb-12">
-                                    <label for="txtPrgPathU" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">群組說明
-                                    </label>
-                                    <input id="txtGroupDescU"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-                                
-                                <div class="input-group mb-12">
-                                    <div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
-                                       
-										<button  type="submit" class="btn btn-primary" onclick="SaveData('UPD');">修改
-										</div><div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
-										<button  type="submit" class="btn btn-primary" onclick="Cancel()">取消
-                                        </button>
-                                    </div>
-                                </div>                          
-                        </div>                        
+<div class="col-xl-8 col-lg-8 col-md-8 col-sm-8" id="divUpd" style="display:none;overflow:auto;height:700px">
+    <div class="bg-white tm-block">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="tm-block-title d-inline-block">修改</h2>
+            </div>
+        </div>
+        <div class="row mt-4 tm-edit-product-row">
+            <div class="col-xl-12 col-lg-12 col-md-12">
+                <div class="input-group mb-12">
+                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組代號</label>
+                    <input id="txtGROUPNOU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                </div>
+                <div class="input-group mb-12">
+                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">群組名稱</label>
+                    <input id="txtGroupNameU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                </div>
+                <div class="input-group mb-12">
+                    <label for="txtPrgPathU" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">
+                        群組說明
+                    </label>
+                    <input id="txtGroupDescU" type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
+                </div>
+
+                <div class="input-group mb-12">
+                    <div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+
+                        <button type="submit" class="btn btn-primary" onclick="SaveData('UPD');">修改
+                    </div><div class="ml-auto col-xl-6 col-lg-6 col-md-6 col-sm-6 pl-0">
+                        <button type="submit" class="btn btn-primary" onclick="Cancel()">
+                            取消
+                        </button>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
           @* 修改結束 *@
 		  @* 群組程式 *@
-		  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"  id="divPrgAdd" style="display:none;overflow:auto;height:700px">
-				<div class="bg-white tm-block h-100">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <h2 class="tm-block-title d-inline-block">程式</h2>
-                            </div>
-                            <div class="col-md-12 col-sm-12 text-right">
-								<div class="input-group mb-12">
-                                    <label  class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">程式/目錄
-                                    </label>
-                                    <!--<input id="txtPrgSernoA"  type="text" class="form-control validate col-xl-6 col-lg-6 col-md-6 col-sm-6" />-->
-									<select  id="selPrg"></select>
-                                <input type="button" onclick="PreAddPrg()" value="新增程式" />
-								</div>
-
-                                
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped tm-table-striped-even mt-12" id="TablePrg">
-                                <thead>
-                                    <tr class="tm-bg-gray">
-                                        <th scope="col">刪除</th>
-                                        <th scope="col">程式/目錄</th>
-                                        <th scope="col" >程式名稱</th>
-                                        <th scope="col" >程式說明</th>                                    
-                                    </tr>
-                                </thead>
-                                <tbody>					
-                                </tbody>
-                            </table>
-                        </div>                       
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" id="divPrgAdd" style="display:none;overflow:auto;height:700px">
+    <div class="bg-white tm-block h-100">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <h2 class="tm-block-title d-inline-block">程式</h2>
+            </div>
+            <div class="col-md-12 col-sm-12 text-right">
+                <div class="input-group mb-12">
+                    <label class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">
+                        程式/目錄
+                    </label>
+                    <!--<input id="txtPrgSernoA"  type="text" class="form-control validate col-xl-6 col-lg-6 col-md-6 col-sm-6" />-->
+                    <select id="selPrg"></select>
+                    <input type="button" onclick="PreAddPrg()" value="新增程式" />
                 </div>
-		  </div>
+
+
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped tm-table-striped-even mt-12" id="TablePrg">
+                <thead>
+                    <tr class="tm-bg-gray">
+                        <th scope="col">刪除</th>
+                        <th scope="col">程式/目錄</th>
+                        <th scope="col">程式名稱</th>
+                        <th scope="col">程式說明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 		  @* 群組使用者 *@
-		   <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12"  id="divUserAdd" style="display:none;overflow:auto;height:700px">
-				<div class="bg-white tm-block h-100">
-                        <div class="row">
-                            <div class="col-md-12 col-sm-12">
-                                <h2 class="tm-block-title d-inline-block">使用者</h2>
-                            </div>
-                            <div class="col-md-12 col-sm-12 text-right">
-								<div class="input-group mb-12">
-                                    <label  class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">工號
-                                    </label>
-                                    <input id="txtEmpnoA"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
-                                </div>
-								<div class="input-group mb-12">
-                                    <label  class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">AD
-                                    </label>
-                                    <input id="txtADA"  type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" VALUE='GIGABYTE' />
-                                </div>
-                                <a href="#" class="btn btn-small btn-primary" onclick="PreAddEmp()">新增使用者</a>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped tm-table-striped-even mt-3" id="TableEmp">
-                                <thead>
-                                    <tr class="tm-bg-gray">
-                                        <th scope="col">刪除</th>
-                                        <th scope="col">工號</th>
-                                        <th scope="col" >姓名</th>
-                                        <th scope="col" >AD</th>                                    
-                                    </tr>
-                                </thead>
-                                <tbody>					
-                                </tbody>
-                            </table>
-                        </div>                       
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" id="divUserAdd" style="display:none;overflow:auto;height:700px">
+    <div class="bg-white tm-block h-100">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <h2 class="tm-block-title d-inline-block">使用者</h2>
+            </div>
+            <div class="col-md-12 col-sm-12 text-right">
+                <div class="input-group mb-12">
+                    <label class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">
+                        工號
+                    </label>
+                    <input id="txtEmpnoA" type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" />
                 </div>
-		  </div>
+                <div class="input-group mb-12">
+                    <label class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">
+                        AD
+                    </label>
+                    <input id="txtADA" type="text" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" VALUE='AA' />
+                </div>
+                <a href="#" class="btn btn-small btn-primary" onclick="PreAddEmp()">新增使用者</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped tm-table-striped-even mt-3" id="TableEmp">
+                <thead>
+                    <tr class="tm-bg-gray">
+                        <th scope="col">刪除</th>
+                        <th scope="col">工號</th>
+                        <th scope="col">姓名</th>
+                        <th scope="col">AD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 		  @* 主程式開始 *@
-                 <div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-col">
-                    <div class="bg-white tm-block h-100">
-                        <div class="row">
-                            <div class="col-md-8 col-sm-12">
-                                <h2 class="tm-block-title d-inline-block">群組</h2>
+<div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-col">
+    <div class="bg-white tm-block h-100">
+        <div class="row">
+            <div class="col-md-8 col-sm-12">
+                <h2 class="tm-block-title d-inline-block">群組</h2>
 
-                            </div>
-                            <div class="col-md-4 col-sm-12 text-right">
-                                <a href="#" class="btn btn-small btn-primary" onclick="PreAdd()">新增群組</a>
-                            </div>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped tm-table-striped-even mt-3" id="Table">
-                                <thead>
-                                    <tr class="tm-bg-gray">
-                                        <th scope="col">刪除/修改</th>
-                                        <th scope="col">群組代號</th>
-                                        <th scope="col" >群組名稱</th>
-                                        <th scope="col" >群組說明</th>
-                                        <th scope="col">群組對應使用者</th>
-										<th scope="col">群組對應程式</th>                                        
-                                    </tr>
-                                </thead>
-                                <tbody>					
-                                </tbody>
-                            </table>
-                        </div>                       
-                    </div>
-                </div>
-			
-                
-
-
+            </div>
+            <div class="col-md-4 col-sm-12 text-right">
+                <a href="#" class="btn btn-small btn-primary" onclick="PreAdd()">新增群組</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped tm-table-striped-even mt-3" id="Table">
+                <thead>
+                    <tr class="tm-bg-gray">
+                        <th scope="col">刪除/修改</th>
+                        <th scope="col">群組代號</th>
+                        <th scope="col">群組名稱</th>
+                        <th scope="col">群組說明</th>
+                        <th scope="col">群組對應使用者</th>
+                        <th scope="col">群組對應程式</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
