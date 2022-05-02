@@ -426,7 +426,7 @@ namespace DataLibrary
             return clsdata.Q1UserGroup(SeqNo);
         }
         #endregion
-        #region "Category"
+        #region Category
         public DataTable QryCategory()
         {
             return clsdata.QryCategory();
@@ -455,6 +455,119 @@ namespace DataLibrary
         {
             return clsdata.QueryMenuCategory();
         }
+        #endregion
+        #region RegAllComputer
+        public DataSet InitRegAllComputer()
+        {
+            return clsdata.InitRegAllComputer();
+        }
+        public bool AddRegAllComputer(string empno, string Computer_Name, string fingerprint, string host_name, ref string strErrMsg)
+        {
+            return clsdata.AddRegAllComputer(empno, Computer_Name, fingerprint, host_name, ref strErrMsg);
+        }
+        public bool UpdRegAllComputer(string Computer_Name, string fingerprint, string host_name, string id, ref string strErrMsg)
+        {
+            return clsdata.UpdRegAllComputer(Computer_Name, fingerprint, host_name, id, ref strErrMsg);
+        }
+        public DataSet QryRegAllComputer(string Empno, string own_type, string stats, string Mac, string FAJ, int Page)
+        {
+            int intTotal = clsdata.QryCountRegAllComputer(Empno, own_type, stats, Mac, FAJ);
+            DataTable dt = new DataTable();
+            DataTable dt2 = new DataTable();
+            DataSet ds = new DataSet();
+            dt = clsdata.QryRegAllComputer(Empno, own_type, stats, Mac, FAJ, Page);
+            dt.TableName = "Data";
+
+            dt2.Columns.Add("TotalCount", typeof(int));
+            dt2.Rows.Add();
+            dt2.Rows[0]["TotalCount"] = intTotal;
+            dt2.TableName = "TotalPages";
+
+
+            ds.Tables.Add(dt.Copy());
+            ds.Tables.Add(dt2.Copy());
+
+            return ds;
+        }
+        public DataTable Q1RegAllComputer(string id)
+        {
+            return clsdata.Q1RegAllComputer(id);
+        }
+        public bool DelRegAllComputer(string id,ref string strErrMsg)
+        {
+            return clsdata.DelRegAllComputer(id,ref strErrMsg);
+        }
+        public bool DelMac(string id,ref string strErrMsg)
+        {
+            return clsdata.DelMAC (id,ref strErrMsg);
+        }
+        public bool AddMac(string own_type, string HostName, string FajNo, string remark, string UseEmpno, string AddEmpno, DataTable dtMac,ref string strErrMsg)
+        {
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+            int Ii = 0;
+            if(!clsdata.AddMAC_1(own_type, HostName, FajNo, remark,UseEmpno,AddEmpno,ref strErrMsg))
+            {
+                throw new Exception(strErrMsg);
+            }
+            //找ID
+            dt1 = clsdata.AddMac_2(own_type, HostName, FajNo, remark, UseEmpno, AddEmpno);
+            for (Ii = 0; Ii < dtMac.Rows.Count; Ii++)
+            {
+                if(!clsdata.AddMAC_3(dtMac.Rows[Ii]["name"].ToString(), dtMac.Rows[Ii]["Mac_Address"].ToString(),ref strErrMsg))
+                {
+                    throw new Exception(strErrMsg);
+                }
+                //找ID
+                dt2 = clsdata.AddMAC_4(dtMac.Rows[Ii]["name"].ToString(), dtMac.Rows[Ii]["Mac_Address"].ToString());
+
+                if(!clsdata.AddMAC_5(dt2.Rows[0]["id"].ToString(),dt1.Rows[0]["id"].ToString(),ref strErrMsg))
+                {
+                    throw new Exception(strErrMsg);
+
+                }
+
+            }
+            return true;
+
+
+        }
+        public DataSet CheckMac(string host_name, string FAJ)
+        {
+            return clsdata.CheckMac(host_name, FAJ);
+        }
+        public bool UpdMac(string id, string own_type, string HostName, string FajNo, string remark, DataTable dtMac,ref string strErrMsg)
+        {
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+            int Ii = 0;
+            if(!clsdata.UpdMac_1(id,own_type,HostName,FajNo,remark,ref strErrMsg))
+            {
+                throw new Exception(strErrMsg);
+            }
+            if(!clsdata.UpdMac_2(id,ref strErrMsg))
+            {
+                throw new Exception(strErrMsg);
+            }
+            if (!clsdata.UpdMac_3(id, ref strErrMsg))
+            {
+                throw new Exception(strErrMsg);
+            }
+            for (Ii = 0; Ii < dtMac.Rows.Count; Ii++)
+            {
+                if (!clsdata.UpdMac_4(dtMac.Rows[Ii]["name"].ToString(), dtMac.Rows[Ii]["Mac_Address"].ToString(), ref strErrMsg))
+                {
+                    throw new Exception(strErrMsg);
+                }
+                dt2 = clsdata.UpdMac_5(dtMac.Rows[Ii]["name"].ToString(), dtMac.Rows[Ii]["Mac_Address"].ToString());
+                if(!clsdata.UpdMac_6(dt2.Rows[0]["id"].ToString(),id,ref strErrMsg))
+                {
+                    throw new Exception(strErrMsg);
+                }
+            }
+            return true;
+       }
+
         #endregion
     }
 }

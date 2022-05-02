@@ -803,7 +803,7 @@ namespace DataLibrary
         }
         #endregion
 
-        #region "登入"
+        #region 登入
         public DataTable LoginAD(string AD, string Account, string Pass)
         {
             string[,] V_arr = new string[3, 2];
@@ -834,7 +834,7 @@ namespace DataLibrary
             return pub_lib.Query(strSQL, V_arr).Tables[0];
         }
         #endregion
-        #region "Group"
+        #region Group
         public DataTable QueryAllGroup()
         {
             string strSQL = "SELECT * FROM UserGroup ORDER BY SeqNo";
@@ -977,7 +977,7 @@ namespace DataLibrary
         }
 
         #endregion
-        #region "Category"
+        #region Category
         public DataTable QryCategory()
         {
             string strSQL = "SELECT * FROM vw_menu ORDER BY BigSeq,MasterNo,SeqNo";
@@ -1062,6 +1062,350 @@ namespace DataLibrary
             return pub_lib.Query(strSQL).Tables[0];
         }
         #endregion
+        #region RegAllComputer
+        public DataSet InitRegAllComputer()
+        {
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+            DataSet ds = new DataSet();
 
+            string strSQL = "SELECT * FROM code_d WHERE code_kind='own_type'  ORDER BY CONVERT(INT,attr1) DESC";
+            dt1 =pub_lib.Query(strSQL).Tables[0];
+            dt1.TableName = "own_type";
+
+
+            strSQL = "SELECT * FROM code_d WHERE code_kind='Computer_status'   ORDER BY CONVERT(INT,attr1) DESC";
+            dt2 = pub_lib.Query(strSQL).Tables[0];
+            dt2.TableName="Computer_status";
+
+            ds.Tables.Add(dt1.Copy());
+            ds.Tables.Add(dt2.Copy());
+            return ds;
+        }
+        public bool AddRegAllComputer(string empno,string Computer_Name,string fingerprint,string host_name,ref string strErrMsg)
+        {
+            string[,] V_arr = new string[4, 1];
+          string   strSQL = "INSTERT INTO  user_Computer (empno, Computer_Name,  fingerprint, host_name) VALUES (@empno, @Computer_Name, @fingerprint, @host_name)";
+            V_arr[0, 0] = "@empno";
+            V_arr[0, 1] = empno;
+
+            V_arr[1, 0] = "@Computer_Name";
+            V_arr[1, 1] = Computer_Name;
+
+            V_arr[2, 0] = "@fingerprint";
+            V_arr[2, 1] = fingerprint;
+
+            V_arr[3, 0] = "@host_name";
+            V_arr[3, 1] = host_name;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool UpdRegAllComputer(string Computer_Name,string fingerprint,string host_name,string id,ref string  strErrMsg)
+        {
+            string[,] V_arr = new string[4, 1];
+            string strSQL = " UPDATE user_Computer SET Computer_Name=@Computer_Name ,  fingerprint=@fingerprint , host_name=@host_name WHERE id=@id ";
+
+           
+
+            V_arr[0, 0] = "@Computer_Name";
+            V_arr[0, 1] = Computer_Name;
+
+            V_arr[1, 0] = "@fingerprint";
+            V_arr[1, 1] = fingerprint;
+
+            V_arr[2, 0] = "@host_name";
+            V_arr[2, 1] = host_name;
+
+            V_arr[3, 0] = "@id";
+            V_arr[3, 1] = id;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        public int QryCountRegAllComputer(string Empno,string own_type,string stats,string Mac,string FAJ)
+        {
+            DataTable dt1 = new DataTable();
+         
+            string[,] V_arr = new string[5,2];
+            int TotalPages = 0;
+            string strSQL = "SELECT COUNT(*) TT FROM user_Computer WHERE empno LIKE '%' + @empno + '%' AND own_type LIKE '%' + @own_type + '%'  AND stats LIKE '%' + @stats + '%' AND id IN ( SELECT aa.User_Computer_id FROM  Computer_MacAddress aa ,MacAddress_d bb WHERE  Mac_Address LIKE '%' +@Mac +'%' AND aa.MacAddress_id =bb.id ) AND FAJ_number LIKE '%' + @FAJ + '%' ";
+            V_arr[0, 0] = "@empno";
+            V_arr[0, 1] = Empno;
+
+            V_arr[1, 0] = "@own_type";
+            V_arr[1, 1] = own_type;
+
+            V_arr[2, 0] = "@stats";
+            V_arr[2, 1] = stats;
+
+            V_arr[3, 0] = "@Mac";
+            V_arr[3, 1] = Mac;
+
+            V_arr[4, 0] = "@FAJ";
+            V_arr[4, 1] = FAJ;
+            dt1 = pub_lib.Query(strSQL, V_arr).Tables[0];
+            TotalPages = (Convert.ToInt32(dt1.Rows[0]["TT"].ToString()) % 10 == 0 ? Convert.ToInt32(dt1.Rows[0]["TT"].ToString()) / 10 : (Convert.ToInt32(dt1.Rows[0]["TT"].ToString()) / 10) + 1);
+            return TotalPages;
+
+        }
+        public DataTable QryRegAllComputer(string Empno, string own_type, string stats, string Mac, string FAJ, int Page)
+        {
+            DataTable dt1 = new DataTable();
+
+            string[,] V_arr = new string[5, 2];
+            string strSQL = "SELECT a.*, (SELECT TOP 1 b.user_name FROM [EHR].[dbo].[vw_address_book2] b WHERE a.empno COLLATE   Chinese_Taiwan_Stroke_CI_AS  =b.main_user  COLLATE   Chinese_Taiwan_Stroke_CI_AS  ) user_name ,c.code_desc stats_desc,d.code_desc own_type_desc ,(SELECT + '{' + '\"name\":' + '\"' +  aa.name + '\"' + ',' + '\"value\":' + '\"' + aa.Mac_Address + '\"' + '},' FROM MacAddress_d aa,Computer_MacAddress bb WHERE aa.id=bb.MacAddress_id AND bb.User_Computer_id =a.ID FOR XML PATH('') )   Mac_Address_d FROM user_Computer a,code_d c,code_d d   WHERE a.empno LIKE '%' + @empno + '%' AND a.own_type LIKE '%' + @own_type + '%' AND a.stats LIKE '%' + @stats + '%' AND a.stats=c.code_val AND c.code_kind='Computer_status' AND a.[Own_Type] COLLATE Chinese_Taiwan_Stroke_CI_AS=d.[code_val] COLLATE Chinese_Taiwan_Stroke_CI_AS AND d.code_kind='own_type' AND a.id IN ( SELECT aa.User_Computer_id FROM  Computer_MacAddress aa ,MacAddress_d bb WHERE  Mac_Address LIKE '%' +@Mac +'%'  AND aa.MacAddress_id =bb.id ) AND a.FAJ_number LIKE '%' + @FAJ + '%' ORDER BY id DESC";
+            strSQL = strSQL + " OFFSET ("+ (Page - 1) * 10 + ") ROWS FETCH NEXT (10) ROWS ONLY ";
+            strSQL = strSQL + "";
+            V_arr[0, 0] = "@empno";
+            V_arr[0, 1] = Empno;
+
+            V_arr[1, 0] = "@own_type";
+            V_arr[1, 1] = own_type;
+
+            V_arr[2, 0] = "@stats";
+            V_arr[2, 1] = stats;
+
+            V_arr[3, 0] = "@Mac";
+            V_arr[3, 1] = Mac;
+
+            V_arr[4, 0] = "@FAJ";
+            V_arr[4, 1] = FAJ;
+
+            //V_arr[5, 0] = "@Skip";
+            //V_arr[5, 1] = (Page - 1) * 10 + "";
+
+            //V_arr[6, 0] = "@Take";
+            //V_arr[6, 1] = "10";
+
+          return  pub_lib.Query(strSQL,V_arr).Tables[0];
+        }
+        public DataTable Q1RegAllComputer(string id)
+        {
+            string[,] V_arr = new string[1, 2];
+            string strSQL = "SELECT a.*, (SELECT TOP 1 b.user_name FROM [EHR].[dbo].[vw_address_book2] b WHERE a.empno=b.main_user) user_name ,c.code_desc stats_desc,d.code_desc own_type_desc ,(SELECT + '{' + '\"name\":' + '\"' +  aa.name + '\"' + ',' + '\"value\":' + '\"' + aa.Mac_Address + '\"' + '},' FROM MacAddress_d aa,Computer_MacAddress bb WHERE aa.id=bb.MacAddress_id AND bb.User_Computer_id =a.ID FOR XML PATH('') )   Mac_Address_d FROM user_Computer a,code_d c,code_d d   WHERE  a.stats=c.code_val AND c.code_kind='Computer_status' AND a.[Own_Type] =d.[code_val]  AND d.code_kind='own_type' AND id=@id";
+
+            V_arr[0, 0] = "@id";
+            V_arr[0, 1] = id;
+
+            return pub_lib.Query(strSQL, V_arr).Tables[0];
+
+        }
+        public bool DelRegAllComputer(string id,ref string strErrMsg)
+        {
+            string[,] V_arr = new string[1, 2];
+            string strSQL = "UPDATE  user_Computer SET stats='XX' WHERE id=@id";
+
+            V_arr[0, 0] = "@id";
+            V_arr[0, 1] = id;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool DelMAC(string id, ref string strErrMsg)
+        {
+            string[,] V_arr = new string[1, 2];
+            string strSQL = "UPDATE  MacAddress_d SET stats='XX' WHERE id=@id";
+
+            V_arr[0, 0] = "@id";
+            V_arr[0, 1] = id;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        public bool AddMAC_1(string own_type,string HostName,string FajNo,string remark,string UseEmpno,string AddEmpno,ref string strErrMsg)
+        {
+            string[,] V_arr = new string[6, 2];
+            string  strSQL = "INSERT INTO user_Computer (empno, Own_Type,  host_name, FAJ_number,remark,Add_Empno) VALUES ( @empno, @Own_Type,  @host_name, @FAJ_number,@remark ,@Add_Empno) ";
+
+            V_arr[0, 0] = "@empno";
+            V_arr[0, 1] = UseEmpno;
+
+            V_arr[1, 0] = "@Own_Type";
+            V_arr[1, 1] = own_type;
+
+            V_arr[2, 0] = "@host_name";
+            V_arr[2, 1] = HostName;
+
+            V_arr[3, 0] = "@FAJ_number";
+            V_arr[3, 1] = FajNo;
+
+            V_arr[4, 0] = "@remark";
+            V_arr[4, 1] = remark;
+
+            V_arr[5, 0] = "@Add_Empno";
+            V_arr[5, 1] = AddEmpno;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public DataTable AddMac_2(string own_type, string HostName, string FajNo, string remark, string UseEmpno, string AddEmpno)
+        {
+            string[,] V_arr = new string[6, 2];
+           string strSQL = "SELECT * FROM user_Computer WHERE empno=@empno AND Own_Type=@Own_Type AND  host_name=@host_name AND FAJ_number=@FAJ_number  AND Add_Empno=@Add_Empno";
+            V_arr[0, 0] = "@empno";
+            V_arr[0, 1] = UseEmpno;
+
+            V_arr[1, 0] = "@Own_Type";
+            V_arr[1, 1] = own_type;
+
+            V_arr[2, 0] = "@host_name";
+            V_arr[2, 1] = HostName;
+
+            V_arr[3, 0] = "@FAJ_number";
+            V_arr[3, 1] = FajNo;
+
+            V_arr[4, 0] = "@remark";
+            V_arr[4, 1] = remark;
+
+            V_arr[5, 0] = "@Add_Empno";
+            V_arr[5, 1] = AddEmpno;
+
+            return pub_lib.Query(strSQL, V_arr).Tables[0];
+
+
+        }
+        public bool AddMAC_3(string name,string Mac_Address,ref string strErrMsg)
+        {
+            string[,] V_arr = new string[2, 2];
+            string strSQL = " INSERT INTO MacAddress_d (name,Mac_Address) VALUES (@name,@Mac_Address) ";
+
+            V_arr[0, 0] = "@name";
+            V_arr[0, 1] = name;
+
+            V_arr[1, 0] = "@Mac_Address";
+            V_arr[1, 1] = Mac_Address;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public DataTable AddMAC_4(string name, string Mac_Address)
+        {
+            string[,] V_arr = new string[2, 2];
+            string   strSQL = "SELECT * FROM MacAddress_d WHERE name=@name AND Mac_Address=@Mac_Address ";
+            V_arr[0, 0] = "@name";
+            V_arr[0, 1] = name;
+
+            V_arr[1, 0] = "@Mac_Address";
+            V_arr[1, 1] = Mac_Address;
+
+            return pub_lib.Query(strSQL, V_arr).Tables[0]; 
+        }
+        public bool AddMAC_5(string MacAddress_id,string User_Computer_id,ref string strErrMsg)
+        {
+            string[,] V_arr = new string[2, 2];
+            string  strSQL = " INSERT INTO Computer_MacAddress ( MacAddress_id, User_Computer_id) VALUES ( @MacAddress_id, @User_Computer_id) ";
+
+            V_arr[0, 0] = "@MacAddress_id";
+            V_arr[0, 1] = MacAddress_id;
+
+            V_arr[1, 0] = "@User_Computer_id";
+            V_arr[1, 1] = User_Computer_id;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        public DataSet CheckMac(string host_name,string FAJ)
+        {
+            string strSQL = "";
+            string[,] V_arr = new string[1, 2];
+            DataTable dt1 = new DataTable();
+            DataTable dt2 = new DataTable();
+            DataSet ds = new DataSet();
+            strSQL = "SELECT * FROM user_Computer WHERE host_name =@Computer_Name AND stats='00' ";
+            V_arr[0, 0] = "@Computer_Name";
+            V_arr[0, 1] = host_name;
+            dt1 = pub_lib.Query(strSQL).Tables[0];
+            dt1.TableName = "check1";
+
+            strSQL = "SELECT * FROM user_Computer WHERE FAJ_number =@FAJ AND stats='00' AND FAJ_number NOT IN ('NA','無資產')";
+            V_arr[0, 0] = "@FAJ";
+            V_arr[0, 1] = FAJ;
+            dt2 = pub_lib.Query(strSQL).Tables[0];
+            dt2.TableName = "check2";
+
+            ds.Tables.Add(dt1.Copy());
+            ds.Tables.Add(dt2.Copy());
+            return ds;
+
+        }
+        public bool UpdMac_1(string id,string own_type, string HostName, string FajNo, string remark, ref string strErrMsg)
+        {
+            string[,] V_arr = new string[5, 2];
+            string strSQL = "UPDATE  user_Computer SET  Own_Type=@Own_Type,  host_name=@host_name, FAJ_number=@FAJ_number,remark=@remark where id=@id ";
+
+
+      
+
+            V_arr[0, 0] = "@Own_Type";
+            V_arr[0, 1] = own_type;
+
+            V_arr[1, 0] = "@host_name";
+            V_arr[1, 1] = HostName;
+
+            V_arr[2, 0] = "@FAJ_number";
+            V_arr[2, 1] = FajNo;
+
+            V_arr[3, 0] = "@remark";
+            V_arr[3, 1] = remark;
+
+            V_arr[4, 0] = "@id";
+            V_arr[4, 1] = id;
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool UpdMac_2(string id, ref string strErrMsg)
+        {
+            //先全砍 MacAddress_d、Computer_MacAddress
+            string[,] V_arr = new string[1, 2];
+            string strSQL = "DELETE   MacAddress_d WHERE id IN ( SELECT MacAddress_id FROM  Computer_MacAddress WHERE User_Computer_id=@id )";
+            V_arr[0, 0] = "@id";
+            V_arr[0, 1] = id;
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public bool UpdMac_3(string id, ref string strErrMsg)
+        {
+            //先全砍 MacAddress_d、Computer_MacAddress
+            string[,] V_arr = new string[1, 2];
+            string strSQL = "DELETE   Computer_MacAddress WHERE User_Computer_id =@id";
+            V_arr[0, 0] = "@id";
+            V_arr[0, 1] = id;
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        public bool UpdMac_4(string name ,string Mac_Address,ref string strErrMsg)
+        {
+            //新增
+            string[,] V_arr = new string[2, 2];
+            string strSQL = " INSERT INTO MacAddress_d (name,Mac_Address) VALUES (@name,@Mac_Address) ";
+            V_arr[0, 0] = "@name";
+            V_arr[0, 1] = name;
+            V_arr[1, 0] = "@Mac_Address";
+            V_arr[1, 1] = Mac_Address;
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+
+        }
+        public DataTable UpdMac_5(string name,string Mac_Address)
+        {
+            string[,] V_arr = new string[2, 2];
+            string strSQL = "SELECT * FROM MacAddress_d WHERE name=@name AND Mac_Address=@Mac_Address ";
+            V_arr[0, 0] = "@name";
+            V_arr[0, 1] = name;
+            V_arr[1, 0] = "@Mac_Address";
+            V_arr[1, 1] = Mac_Address;
+
+          return  pub_lib.Query(strSQL).Tables[0];
+        }
+        public bool UpdMac_6(string MacAddress_id, string User_Computer_id,ref string strErrMsg)
+        {
+            //建立關聯
+            string[,] V_arr = new string[2, 2];
+           string  strSQL = " INSERT INTO Computer_MacAddress ( MacAddress_id, User_Computer_id) VALUES ( @MacAddress_id, @User_Computer_id) ";
+
+            V_arr[0, 0] = "@MacAddress_id";
+            V_arr[0, 1] = MacAddress_id;
+            V_arr[1, 0] = "@User_Computer_id";
+            V_arr[1, 1] = User_Computer_id;
+
+            return pub_lib.ExecSQL(strSQL, V_arr, ref strErrMsg);
+        }
+        #endregion
     }
 }

@@ -1,0 +1,848 @@
+﻿@*
+    RegALLComputer
+*@
+@section scripts{
+<script type="text/javascript">
+	$(document).ready(function () {
+		//SaveData('QRY');
+		var AA={};
+		$.post("/RegALLComputer", { Way: "INIT",ServerKey:ServerKey,fingerprint:fingerprint}, function (data, result) {
+			if (data.message == "OK") {
+				AA=JSON.parse(data.data);
+				//selown_type selown_typeQ selown_typeU
+				for(Ii=0;Ii<AA.own_type.length;Ii++){
+					  $('#selown_type').append($('<option>', {
+							value: AA.own_type[Ii].Code_Val,
+							text: AA.own_type[Ii].Code_Desc
+					  }));
+					  $('#selown_typeQ').append($('<option>', {
+							value: AA.own_type[Ii].Code_Val,
+							text: AA.own_type[Ii].Code_Desc
+					  }));
+					  $('#selown_typeU').append($('<option>', {
+							value: AA.own_type[Ii].Code_Val,
+							text: AA.own_type[Ii].Code_Desc
+					  }));
+
+				}
+				//selstatsQ
+				for(Ii=0;Ii<AA.Computer_status.length;Ii++){
+					  $('#selstatsQ').append($('<option>', {
+                        value: AA.Computer_status[Ii].Code_Val,
+                        text: AA.Computer_status[Ii].Code_Desc
+                    }));
+				}
+			
+			}
+			SaveData('QRY');
+		});
+	});
+
+</script>
+<script type="text/javascript">
+	var Function="RegALLComputer";
+	
+
+	function Upd(){
+		var computer_id=$("#txtID").val();
+		
+		var MAC=[];
+		var id=0;
+		var own_type="";
+		var HostName="";
+		var FajNo="";
+		var Desc="";
+		var strErrMessage="";
+		var Pp=0;
+
+		if($("#txtEmpnoU").val()==""){			
+			strErrMessage="請輸入工號";
+			$("#txtEmpnoU").css("background-color","yellow");
+		}else{
+			$("#txtEmpnoU").css("background-color","");
+		}
+
+		if($("#selown_typeU").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage + "請選擇資產類別";
+			$("#selown_typeU").css("background-color","yellow");
+		}else{
+			$("#selown_typeU").css("background-color","");
+		}
+		if($("#txtHostNameU").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage + "請輸入電腦名稱";
+			$("#txtHostNameU").css("background-color","yellow");
+		}else{
+			$("#txtHostNameU").css("background-color","");
+		}
+		if($("#txtFajNoU").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage + "請輸入資產/資安編號";
+			$("#txtFajNoU").css("background-color","yellow");
+		}else{
+			$("#txtFajNoU").css("background-color","");
+		}
+		if($("#txtDescU").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage +"請輸入用途說明";
+			$("#txtDescU").css("background-color","yellow");
+		}else{
+			$("#txtDescU").css("background-color","");
+		}
+		$("div[id^='divMacU_']").each(function(int,total){
+			id=$(this).prop("id").split("_")[1];
+			if($("#txtNameU_" + id).val()==""){
+				if(strErrMessage!=""){
+					strErrMessage=strErrMessage + "\r\n";
+				}
+				strErrMessage=strErrMessage +"請輸入網卡"+ (Pp +1) +" 名稱" ;
+				$("#txtNameU_" + id).css("background-color","yellow");
+			}else{
+				$("#txtNameU_" + id).css("background-color","");
+			}
+			if($("#txtMacU_" + id).val()==""){
+				if(strErrMessage!=""){
+					strErrMessage=strErrMessage + "\r\n";
+				}
+				strErrMessage=strErrMessage +"請輸入網卡"+ (Pp +1) +" MAC Address" ;
+				$("#txtMacU_" + id).css("background-color","yellow");
+			}else{
+				$("#txtMacU_" + id).css("background-color","");
+			}
+			Pp=Pp+1;
+
+
+		});
+
+
+
+
+		if(strErrMessage !=""){
+			alert(strErrMessage);
+			return;
+		}
+
+
+
+		$("div[id^='divMacU_']").each(function(int,total){
+			 id=$(this).prop("id").split("_")[1];
+			 MAC.push({ name: $("#txtNameU_" + id).val() ,mac: $("#txtMacU_" + id).val() });
+		
+		});
+		own_type=$("#selown_typeU").val();
+		HostName=$("#txtHostNameU").val();
+		FajNo=$("#txtFajNoU").val();
+		Desc=$("#txtDescU").val();
+
+
+		$.post("/RegALLComputer",{ Way: "UPDMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc ,computer_id:computer_id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			
+			unblock();
+			SaveData("QRY");
+		
+		});
+	
+
+	
+	
+	}
+
+	function PreUpd(id){
+		var w = $(window).width();
+		var Jj=0;
+		var AA={};
+		$("#txtID").val(id);
+		//初始化
+		$("#txtMac").val(0);
+		$("div[id^='divMacU_']").each(function(int,total){
+			$(this).remove();	
+		});
+		$("#selown_typeU").val("");
+		$("#txtHostNameU").val("");
+		$("#txtFajNoU").val("");
+		$("#txtDescU").val("");
+
+		$.post("/RegALLComputer",{Way: "Q1" ,id:id ,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			AA=JSON.parse(data.data);
+			//回傳的資料
+			$("#selown_typeU").val(AA[0].Own_Type);
+			$("#txtHostNameU").val(AA[0].host_name);
+			$("#txtFajNoU").val(AA[0].FAJ_number);
+			$("#txtDescU").val(AA[0].remark);
+			$("#txtEmpnoU").val(AA[0].empno);
+			//文字轉JSON開始
+			var text="";
+			var MJ;
+			if(AA[0].Mac_Address_d==null){
+				MJ={mac:[]};
+			}else{
+				text=AA[0].Mac_Address_d.substring(0, data.Data[0].Mac_Address_d.length-1);			
+				text="{\"mac\":[" + text + "]}";
+				MJ=JSON.parse(text);
+			}
+
+			
+			var strTmp="";
+			if(MJ.mac.length==0){
+				$("#txtMac").val(1);
+
+				var intTmp=$("#txtMac").val();
+		
+					strTmp=strTmp+ "<div class=\"input-group mb-3\" id=\"divMacU_"+ Jj +"\">";
+					strTmp=strTmp+ "	<input id=\"txtNameU_"+ Jj +"\"  type=\"text\" class=\"form-control validate col-xl-4 col-lg-4 col-md-4 col-sm-5\" autocomplete=\"off\" placeholder=\"網卡名稱\" >";
+					strTmp=strTmp+ "	";
+					strTmp=strTmp+ "	<input id=\"txtMacU_"+ Jj +"\"  type=\"text\" class=\"form-control validate col-xl-5 col-lg-5 col-md-5 col-sm-4\" autocomplete=\"off\" placeholder=\"MAC Address\" >";
+					strTmp=strTmp+ "	<div class=\"ml-auto col-xl-3 col-lg-3 col-md-3 col-sm-2 pl-0\">";
+					
+						strTmp=strTmp+ "	<button type=\"button\" class=\"btn btn-primary\" onclick=\"AddMac('U')\">新增網卡";
+					
+					
+					strTmp=strTmp+ "	</button>";
+					strTmp=strTmp+ "	</div>	";
+					strTmp=strTmp+ "	</div>";
+
+			
+			}
+			for(Jj=0;Jj<MJ.mac.length;Jj++){
+				$("#txtMac").val(parseInt($("#txtMac").val())+1);
+				if($("#divMacU_" + Jj).length < 1){
+					//新增一個空白的
+					
+					var intTmp=$("#txtMac").val();
+		
+					strTmp=strTmp+ "<div class=\"input-group mb-3\" id=\"divMacU_"+ Jj +"\">";
+					strTmp=strTmp+ "	<input id=\"txtNameU_"+ Jj +"\"  type=\"text\" class=\"form-control validate col-xl-4 col-lg-4 col-md-4 col-sm-5\" autocomplete=\"off\" placeholder=\"網卡名稱\" value=\""+ MJ.mac[Jj].name + "\">";
+					strTmp=strTmp+ "	";
+					strTmp=strTmp+ "	<input id=\"txtMacU_"+ Jj +"\"  type=\"text\" class=\"form-control validate col-xl-5 col-lg-5 col-md-5 col-sm-4\" autocomplete=\"off\" placeholder=\"MAC Address\" value=\""+ MJ.mac[Jj].value + "\">";
+					strTmp=strTmp+ "	<div class=\"ml-auto col-xl-3 col-lg-3 col-md-3 col-sm-2 pl-0\">";
+					if(Jj==0){
+						strTmp=strTmp+ "	<button type=\"button\" class=\"btn btn-primary\" onclick=\"AddMac('U')\">新增網卡";
+					}else{
+						strTmp=strTmp+ "	<button type=\"button\" class=\"btn btn-primary\" onclick=\"RemoveMac('"+ Jj +"','U')\">移除網卡";
+					}
+					
+					strTmp=strTmp+ "	</button>";
+					strTmp=strTmp+ "	</div>	";
+					strTmp=strTmp+ "	</div>";
+					
+				}else{
+					//$("#txtNameU_"+ Jj ).val(MJ.mac[Jj].name);
+					//$("#txtMacU_"+ Jj ).val(MJ.mac[Jj].value);
+				}		
+				
+			}
+			$("#divMacU").html(strTmp);
+		
+
+
+
+			$.blockUI({
+                message: $("#divUpd"),
+                css: {
+						top:'20px',
+						width:'60%',
+						cursor: "default",
+						border: 'none',
+						left: w/4
+					},
+				onOverlayClick: $.unblockUI
+			});
+		
+		
+		});
+
+
+
+		
+
+
+
+	}
+
+
+	function PreDel(id,name){
+		if(confirm("您確定要刪除這筆資料？(名稱:"+ name +")")){
+			$("#txtID").val(id);
+			SaveData('DEL');
+		}
+	
+	
+	}
+    function PreAdd() {
+		var w = $(window).width();
+		$("#txtMac").val(0);
+		$("div[id^='divMac_'][id!='divMac_0']").each(function(int,total){
+			$(this).remove();	
+		});
+		$("#selown_type").val("");
+		$("#txtHostName").val("");
+		$("#txtFajNo").val("");
+		$("#txtDesc").val("");
+		/*$.post("./DataHandler",{Function : "Category" , Way: "GetMenu"},function(data,result){
+			var Ii =0;
+            var Datas={};
+            var Htmls="";
+			Datas=data.Data;
+			//先全砍
+			$("#selMasterNoA option[value!='-1']").remove();
+			//再欣增
+			for(Ii=0;Ii<Datas.length;Ii++){
+				$("#selMasterNoA").append(new Option(Datas[Ii].PrgName, Datas[Ii].PrgSerNo));
+			}*/
+			$.blockUI({
+                message: $("#divAdd"),
+                css: {
+						top:'20px',
+						width:'60%',
+						cursor: "default",
+						border: 'none',
+						left: w/4
+					},
+					onOverlayClick: $.unblockUI
+				});
+			//});
+		
+	}
+	function AddMac(type){
+		var strTmp=$("#divMac"+ type).html();
+		var txtNameA=[];
+		var txtMacA=[];
+		var Ii;
+		//取值
+		$("input[id^='txtName"+ type +"_']").each(function(int,total){
+			txtNameA.push( {name :  $(this).prop("id") , value : $(this).val()});	
+		});
+		$("input[id^='txtMac"+ type +"_']").each(function(int,total){
+			txtMacA.push({name : $(this).prop("id") , value : $(this).val()});	
+		});
+
+		$("#txtMac").val(parseInt($("#txtMac").val())+1);
+		var intTmp=$("#txtMac").val();
+		
+		strTmp=strTmp+ "<div class=\"input-group mb-3\" id=\"divMac"+ type +"_"+ intTmp +"\">";
+		strTmp=strTmp+ "	<input id=\"txtName"+ type +"_"+ intTmp +"\"  type=\"text\" class=\"form-control validate col-xl-4 col-lg-4 col-md-4 col-sm-5\" autocomplete=\"off\" placeholder=\"網卡名稱\">";
+		strTmp=strTmp+ "	";
+		strTmp=strTmp+ "	<input id=\"txtMac"+ type +"_"+ intTmp +"\"  type=\"text\" class=\"form-control validate col-xl-5 col-lg-5 col-md-5 col-sm-4\" autocomplete=\"off\" placeholder=\"MAC Address\">";
+		strTmp=strTmp+ "	<div class=\"ml-auto col-xl-3 col-lg-3 col-md-3 col-sm-2 pl-0\">";
+		strTmp=strTmp+ "	<button type=\"button\" class=\"btn btn-primary\" onclick=\"RemoveMac('"+ intTmp +"','"+ type +"')\">移除網卡";
+		strTmp=strTmp+ "	</button>";
+		strTmp=strTmp+ "	</div>	";
+		strTmp=strTmp+ "	</div>";
+		$("#divMac" + type ).html(strTmp);
+		/*
+		給予值	
+		*/
+		for(Ii=0;Ii<txtNameA.length;Ii++){
+			$("#" + txtNameA[Ii].name).val(txtNameA[Ii].value);	
+		}
+		for(Ii=0;Ii<txtMacA.length;Ii++){
+			$("#" + txtMacA[Ii].name).val(txtMacA[Ii].value);	
+		}
+
+	}
+	function RemoveMac(id,type){
+		$("#divMac"+ type + "_" + id).remove();
+	
+	}
+	function Send(){
+		var MAC=[];
+		var id=0;
+		var own_type="";
+		var HostName="";
+		var FajNo="";
+		var Desc="";
+		var strErrMessage="";
+		var Pp=0;
+		var UseEmpno="";
+		var AA={};
+		if($("#txtEmpno").val()==""){			
+			strErrMessage="請輸入工號";
+			$("#txtEmpno").css("background-color","yellow");
+		}else{
+			$("#txtEmpno").css("background-color","");
+		}
+
+		if($("#selown_type").val()==null){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage + "請選擇資產類別";
+			$("#selown_type").css("background-color","yellow");
+		}else{
+			$("#selown_type").css("background-color","");
+		}
+		if($("#txtHostName").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage + "請輸入電腦名稱";
+			$("#txtHostName").css("background-color","yellow");
+		}else{
+			$("#txtHostName").css("background-color","");
+		}
+		if($("#txtFajNo").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage + "請輸入資產/資安編號";
+			$("#txtFajNo").css("background-color","yellow");
+		}else{
+			$("#txtFajNo").css("background-color","");
+		}
+		if($("#txtDesc").val()==""){
+			if(strErrMessage!=""){
+				strErrMessage=strErrMessage + "\r\n";
+			}
+			strErrMessage=strErrMessage +"請輸入用途說明";
+			$("#txtDesc").css("background-color","yellow");
+		}else{
+			$("#txtDesc").css("background-color","");
+		}
+		$("div[id^='divMac_']").each(function(int,total){
+			id=$(this).prop("id").split("_")[1];
+			if($("#txtName_" + id).val()==""){
+				if(strErrMessage!=""){
+					strErrMessage=strErrMessage + "\r\n";
+				}
+				strErrMessage=strErrMessage +"請輸入網卡"+ (Pp +1) +" 名稱" ;
+				$("#txtName_" + id).css("background-color","yellow");
+			}else{
+				$("#txtName_" + id).css("background-color","");
+			}
+			if($("#txtMac_" + id).val()==""){
+				if(strErrMessage!=""){
+					strErrMessage=strErrMessage + "\r\n";
+				}
+				strErrMessage=strErrMessage +"請輸入網卡"+ (Pp +1) +" MAC Address" ;
+				$("#txtMac_" + id).css("background-color","yellow");
+			}else{
+				$("#txtMac_" + id).css("background-color","");
+			}
+			Pp=Pp+1;
+
+
+		});
+
+
+
+
+		if(strErrMessage !=""){
+			alert(strErrMessage);
+			return;
+		}
+
+
+
+		$("div[id^='divMac_']").each(function(int,total){
+			 id=$(this).prop("id").split("_")[1];
+			 MAC.push({ name: $("#txtName_" + id).val() ,mac: $("#txtMac_" + id).val() });
+		
+		});
+		own_type=$("#selown_type").val();
+		HostName=$("#txtHostName").val();
+		FajNo=$("#txtFajNo").val();
+		Desc=$("#txtDesc").val();
+		UseEmpno=$("#txtEmpno").val();
+		$.post("/RegALLComputer",{ Way: "CheckMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc, UseEmpno:UseEmpno,ServerKey:ServerKey,fingerprint:fingerprint},function(Datas,result){
+			if(Datas.Data.checkdata.Checkmessage!="OK"){
+				AA=JSON.parse(data.data);
+				alert(AA.checkdata.Checkmessage);
+				//變顏色
+				$("#"+Datas.Data.checkdata.ChangeColorControl).css("background-color",AA.checkdata.ChangeColor);
+
+
+
+			}else{	
+				$.post("/RegALLComputer",{Way: "ADDMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc, UseEmpno:UseEmpno,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			
+					unblock();
+					SaveData("QRY");
+		
+				});
+			}
+		});	
+	}
+	function SaveData(Type){
+		var id=$("#txtID").val();
+		var own_type="";
+		var Page=0;
+		var stats="";
+		var AA={};
+		switch (Type) {
+			case "ADD":
+
+			break;
+			case "UPD":
+
+			break;
+			case "DEL":
+
+			break;
+			case "QRY":
+				own_type=$("#selown_typeQ").val();
+				Page=$("#txtCurrentPage").val();
+				stats=$("#selstatsQ").val();
+			break;
+			default:
+			break;
+		}
+		$.post("/RegALLComputer",{ Way: Type , id: id ,QueryEmpno:$("#txtQryEmpno").val() ,own_type:own_type,stats:stats, QueryMacAddress :$("#txtQryMacAddress").val(), QueryFajNo : $("#txtQryFajNo").val() , Page:Page,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+			if(Type=="QRY"){
+				var Ii =0;
+				var Jj=0;
+				var Datas={};
+				var Htmls="";
+				var TotalPage=0;
+				//資料
+				$("tr[id^='tr_']").each(function(int,total){
+					$(this).remove();	
+				});
+				Datas=JSON.parse(data.data);
+				/*
+				刪除/修改
+                使用者姓名(工號)
+                電腦名稱
+				電腦來源
+				資產/資安編號
+                MAC
+                新增日期
+				狀態
+				*/
+				for(Ii=0;Ii<Datas.length;Ii++){
+					//文字轉JSON開始
+
+					var text="";
+					var MJ;
+					if(Datas[Ii].Mac_Address_d=== null){
+						text="";
+						MJ={mac :[]};
+					}else{
+						text=Datas[Ii].Mac_Address_d.substring(0, Datas[Ii].Mac_Address_d.length-1);
+						//text = text.replace(/㊣/g, ',');
+						text="{\"mac\":[" + text + "]}";
+						MJ=JSON.parse(text);
+					}
+					//文字轉JSON結束
+					Htmls=Htmls+"<tr id='tr_"+ Ii +"' >";
+					Htmls=Htmls+"<td ><i class=\"fas fa-trash-alt tm-trash-icon\" onclick=\"PreDel('"+ Datas[Ii].id +"','"+ Datas[Ii].host_name +"')\"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class=\"fas fa-file-alt tm-file-icon\" style=\"cursor: pointer;\" onclick=\"PreUpd('"+ Datas[Ii].id +"')\"></i></td>";           
+					Htmls=Htmls+"<td >"+ Datas[Ii].user_name +"(" + Datas[Ii].empno + ")</td>";
+					Htmls=Htmls+"<td >"+ Datas[Ii].host_name +"</td>";
+					Htmls=Htmls+"<td >"+ Datas[Ii].own_type_desc +"</td>";
+					Htmls=Htmls+"<td >"+ Datas[Ii].FAJ_number +"</td>";
+					Htmls=Htmls+"<td >";
+					for(Jj=0;Jj<MJ.mac.length;Jj++){
+						Htmls=Htmls+ "名稱:" + MJ.mac[Jj].name + ",MAC:" + MJ.mac[Jj].value + "<br>";
+					}
+					Htmls=Htmls+"</td>";
+					Htmls=Htmls+"<td >"+ Datas[Ii].Add_DateTime +"</td>";
+					Htmls=Htmls+"<td >"+ Datas[Ii].stats_desc +"</td>";
+					Htmls=Htmls+"</tr>";
+				}
+				$('#Table  tbody').append(Htmls);
+
+				//分頁
+				//$("#menu").append('<li><a href="#">New list item</a></li>');
+				//li_P_0
+				$("li[id^='li_P_']").each(function(int,total){
+					$(this).remove();	
+				});
+				Htmls="";
+				TotalPage=data.Data.TotalPages
+				var CurrentPage=parseInt($("#txtCurrentPage").val())-1;
+				var Tt=0;
+				for(Jj=CurrentPage;Jj<TotalPage;Jj++){
+					Tt=Tt+1;
+				 	if(Tt>=10){
+						Htmls=Htmls + "<li class=\"page-item \" id=\"li_P_"+ Jj +"\"><a class=\"page-link\" href=\"#\" onclick=\"GotoPage('" + (Jj+1) +"')\">more</a></li>";
+						break;
+					}
+
+					if($("#txtCurrentPage").val()== (Jj+1) ){
+						Htmls=Htmls + "<li class=\"page-item active\" id=\"li_P_"+ Jj +"\"><a class=\"page-link\" href=\"#\">" + (Jj+1) + "</a></li>";
+					}else{
+						Htmls=Htmls + "<li class=\"page-item \" id=\"li_P_"+ Jj +"\"><a class=\"page-link\" href=\"#\" onclick=\"GotoPage('" + (Jj+1) +"')\">" + (Jj+1) + "</a></li>";
+					}
+				
+				
+				
+				}
+				Tt=0;
+				if(CurrentPage>0){
+					//一開始不是第一頁
+					Htmls=  "<li class=\"page-item \" id=\"li_P_"+ 0 +"\"><a class=\"page-link\" href=\"#\" onclick=\"GotoPage('" + (1) +"')\">" + (1) + "</a></li>" + Htmls  ;
+					//Htmls=Htmls +  "........"
+				}
+
+				$("#navPages").append(Htmls);
+
+
+			
+			}else{
+				SaveData("QRY");
+			}
+		
+		
+		});
+	
+	}
+	function unblock(){
+		$.unblockUI();
+	}
+	function SetCurrentPage(page){
+		$("#txtCurrentPage").val(page);
+	
+	}
+	function GotoPage(page){
+		SetCurrentPage(page);
+		SaveData("QRY");
+	}
+</script>
+}
+			<input type="text" id="txtCurrentPage" style="display:none" value="1" />
+			<input type="text" id="txtID" style="display:none" />
+			@*新增*@
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="display:none;overflow:auto;height:700px"  id="divAdd" >
+                <div class="bg-white tm-block">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="tm-block-title d-inline-block">登記電腦</h2>
+                        </div>
+                    </div>
+                    <div class="row mt-12 tm-edit-product-row">
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                            <!--<form action="" class="tm-edit-product-form">-->
+							<div class="input-group mb-3">
+								<label for="txtEmpno" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">工號
+                                </label>
+                                <input id="txtEmpno"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+                             </div>
+							 <div class="input-group mb-3">
+                                    <label for="category" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">公司資產/私人資產</label>
+                                    <select class="custom-select col-xl-9 col-lg-8 col-md-8 col-sm-7" id="selown_type">
+                                        <!--<option value="" selected>請選擇</option>
+                                        <option value="1">公司電腦</option>
+                                        <option value="2">自帶電腦</option>
+                                        -->
+                                    </select>
+                                </div>
+								<div class="input-group mb-3">
+                                    <label for="name" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">電腦名稱
+                                    </label>
+                                    <input id="txtHostName"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <label for="name" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">資產/資安編號
+                                    </label>
+                                    <input id="txtFajNo"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off" placeholder='無資產請輸入NA或無資產'>
+                                </div>
+								<div id="divMac">
+									<div class="input-group mb-3" id="divMac_0">
+										<input id="txtName_0"  type="text" class="form-control validate col-xl-4 col-lg-4 col-md-4 col-sm-5" autocomplete="off" placeholder="網卡名稱">
+										<input id="txtMac_0"  type="text" class="form-control validate col-xl-5 col-lg-5 col-md-5 col-sm-4" autocomplete="off" placeholder="MAC Address">
+										<div class="ml-auto col-xl-3 col-lg-3 col-md-3 col-sm-2 pl-0">
+											<button type="button" class="btn btn-primary" onclick="AddMac('','')">增加網卡
+											</button>
+										</div>	
+									</div>
+									
+								</div>
+                                <div class="input-group mb-3">
+                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">用途說明</label>
+                                    <textarea id="txtDesc" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" rows="3" required autocomplete="off" ></textarea>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="ml-auto col-xl-8 col-lg-8 col-md-8 col-sm-7 pl-0">
+                                        <button type="button" class="btn btn-primary" onclick="Send()">Add
+                                        </button>
+                                    </div>
+                                </div>
+                            <!--</form>-->
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+			@*修改*@
+			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12" style="display:none;overflow:auto;height:700px"  id="divUpd" >
+                <div class="bg-white tm-block">
+                    <div class="row">
+                        <div class="col-12">
+                            <h2 class="tm-block-title d-inline-block">修改電腦</h2>
+                        </div>
+                    </div>
+                    <div class="row mt-12 tm-edit-product-row">
+                        <div class="col-xl-12 col-lg-12 col-md-12">
+                            <!--<form action="" class="tm-edit-product-form">-->
+							<div class="input-group mb-3">
+								<label for="txtEmpnoU" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">工號
+                                </label>
+                                <input id="txtEmpnoU"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off" readonly>
+                             </div>
+							 <div class="input-group mb-3">
+                                    <label for="category" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">公司資產/私人資產</label>
+                                    <select class="custom-select col-xl-9 col-lg-8 col-md-8 col-sm-7" id="selown_typeU">
+                                        <!--<option selected>請選擇</option>
+                                        <option value="1">公司電腦</option>
+                                        <option value="2">自帶電腦</option>
+                                        -->
+                                    </select>
+                                </div>
+								<div class="input-group mb-3">
+                                    <label for="name" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">電腦名稱
+                                    </label>
+                                    <input id="txtHostNameU"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <label for="nameU" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">資產編號
+                                    </label>
+                                    <input id="txtFajNoU"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+                                </div>
+								<div id="divMacU">
+									<div class="input-group mb-3" id="divMacU_0">
+										<input id="txtNameU_0"  type="text" class="form-control validate col-xl-4 col-lg-4 col-md-4 col-sm-5" autocomplete="off" placeholder="網卡名稱">
+										<input id="txtMacU_0"  type="text" class="form-control validate col-xl-5 col-lg-5 col-md-5 col-sm-4" autocomplete="off" placeholder="MAC Address">
+										<div class="ml-auto col-xl-3 col-lg-3 col-md-3 col-sm-2 pl-0">
+											<button type="button" class="btn btn-primary" onclick="AddMac('U')">增加網卡
+											</button>
+										</div>	
+									</div>
+									
+								</div>
+                                <div class="input-group mb-3">
+                                    <label for="description" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 mb-2">用途說明</label>
+                                    <textarea id="txtDescU" class="form-control validate col-xl-9 col-lg-8 col-md-8 col-sm-7" rows="3" required autocomplete="off" ></textarea>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="ml-auto col-xl-8 col-lg-8 col-md-8 col-sm-7 pl-0">
+                                        <button type="button" class="btn btn-primary" onclick="Upd()">Update
+                                        </button>
+                                    </div>
+                                </div>
+                            <!--</form>-->
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+			
+			 @*主程式開始*@
+			 <input type="text" id="txtMac" value="0" style="display:none" />
+                 <div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-col">
+					<div class="bg-white tm-block h-100">
+						<div class="row">
+							<h2 class="tm-block-title d-inline-block">查詢</h2>
+						</div>
+						<div class="input-group mb-3">
+							<label for="txtQryEmpno" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">員工工號</label>
+                             <input id="txtQryEmpno"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+						</div>
+						<div class="input-group mb-3">
+                                    <label for="selown_typeQ" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">公司資產/私人資產</label>
+                                    <select class="custom-select col-xl-9 col-lg-8 col-md-8 col-sm-7" id="selown_typeQ">
+                                        <option value="" selected>不限</option>
+                                        <!--<option value="1">公司電腦</option>
+                                        <option value="2">自帶電腦</option>-->
+                                        
+                                    </select>
+                         </div>
+						 <div class="input-group mb-3">
+                                    <label for="selstatsQ" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">資產狀態</label>
+                                    <select class="custom-select col-xl-9 col-lg-8 col-md-8 col-sm-7" id="selstatsQ">
+                                        <option value="" selected>不限</option>
+                                        <!--<option value="1">使用中</option>
+                                        <option value="2">已移除</option>
+                                        -->
+                                    </select>
+                         </div>
+						 <div class="input-group mb-3">
+							<label for="txtQryFajNo" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">資安/資產編號</label>
+                             <input id="txtQryFajNo"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+						</div>
+						 <div class="input-group mb-3">
+							<label for="txtQryMacAddress" class="col-xl-4 col-lg-4 col-md-4 col-sm-5 col-form-label">Mac Address</label>
+                             <input id="txtQryMacAddress"   type="text" class="form-control validate col-xl-8 col-lg-8 col-md-8 col-sm-7"  autocomplete="off">
+						</div>
+						 <div class="col-md-12 col-sm-12 text-right">
+                                <a href="#" class="btn btn-small btn-primary" onclick="SetCurrentPage(1);SaveData('QRY');">查詢</a>
+                            </div>
+					</div>
+				 </div>
+				 <div class="col-xl-12 col-lg-12 tm-md-12 tm-sm-12 tm-col">
+                    <div class="bg-white tm-block h-100">
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <h2 class="tm-block-title d-inline-block">使用者電腦清單</h2>
+
+                            </div>
+                            <div class="col-md-12 col-sm-12 text-right">
+                                <a href="#" class="btn btn-small btn-primary" onclick="PreAdd()">新增資料</a>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped tm-table-striped-even mt-3" id="Table">
+                                <thead>
+                                    <tr class="tm-bg-gray">
+                                        <th scope="col">刪除/修改</th>
+                                        <th scope="col">使用者姓名(工號)</th>
+                                        <th scope="col" >電腦名稱</th>
+										<th scope="col" >電腦來源</th>
+										<th scope="col" >資產/資安編號</th>
+                                        <th scope="col" >MAC</th>
+                                        <th scope="col">新增日期</th>
+										<th scope="col">狀態</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+								<!--
+                                    <tr>
+                                        <th scope="row">
+                                            <input type="checkbox" aria-label="Checkbox">
+                                        </th>
+                                        <td class="tm-product-name">1. In malesuada placerat (hover)</td>
+                                        <td class="text-center">145</td>
+                                        <td class="text-center">255</td>
+                                        <td>2018-10-28</td>
+                                        <td><i class="fas fa-trash-alt tm-trash-icon"></i></td>
+                                    </tr>
+									-->
+                                 
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tm-table-mt tm-table-actions-row" >
+                            <!--<div class="tm-table-actions-col-left">
+                                <button class="btn btn-danger">Delete Selected Items</button>
+                            </div>-->
+                            <div class="tm-table-actions-col-right" >
+                                <span class="tm-pagination-label">Page</span>
+								
+                                <nav aria-label="Page navigation" class="d-inline-block">
+                                    <ul class="pagination tm-pagination"  id="navPages">
+                                        <li class="page-item active" id="li_P_0"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"  id="li_P_1"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"  id="li_P_2"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item"  id="li_P_more">
+                                            <span class="tm-dots d-block">...</span>
+                                        </li>
+                                        <li class="page-item"  id="li_P_13"><a class="page-link" href="#">13</a></li>
+                                        <li class="page-item"  id="li_P_14"><a class="page-link" href="#">14</a></li>
+                                    </ul>
+                                </nav>
+								
+                            </div>
+                        </div>
+                    </div>
+                </div>
+			@*主程式結束*@
