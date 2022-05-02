@@ -1,5 +1,13 @@
 ﻿public class inRegALLComputer
 {
+    //string HostNameA="";
+    //string FajNoA = "";
+    //string remarkA = "";
+    //string UseEmpnoA = "";
+    //string MACA = "";
+    //string WayA = "";
+    //string idA = "";
+    
     public string HostName { set; get; }
     public string FajNo { set; get; }
     public string remark { set; get; }
