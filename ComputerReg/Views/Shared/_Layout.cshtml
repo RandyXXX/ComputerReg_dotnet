@@ -175,7 +175,7 @@
             //fingerprint=new Fingerprint().get();
             //就算有，檢查是否偽造
             $.ajax({
-                url: '/login',
+                url: 'login',
                 type: 'put',
                 data: { ServerKey: ServerKey,fingerprint:fingerprint},
                 dataType: 'json',
@@ -241,7 +241,7 @@
         function Logout(){
             window.localStorage.removeItem('ServerKey');
             window.localStorage.removeItem('UserName');
-            window.location.href="/";
+            window.location.href=".";
 
         }
     </script>

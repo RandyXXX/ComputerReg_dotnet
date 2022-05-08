@@ -9,7 +9,7 @@
 
 	function PreAdd() {
 		var w = $(window).width();
-		$.post("/Category",{Way: "GetMenu",ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+		$.post("Category",{Way: "GetMenu",ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			var Ii =0;
             var Datas={};
             var Htmls="";
@@ -37,7 +37,7 @@
 	function PreUpd(id){
 		$("#txtID").val(id);
 		var w = $(window).width();
-		$.post("/Category",{ Way: "GetMenu",ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+		$.post("Category",{ Way: "GetMenu",ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			var Ii =0;
             var Datas={};
             var Datas2={};
@@ -115,7 +115,7 @@
 
 		}
 			
-		$.post("/Category",{Way: Type ,MasterNo:MasterNo,PrgName:PrgName,CategoryDesc:CategoryDesc,PrgPath:PrgPath,Seq:Seq,PrgSerNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+		$.post("Category",{Way: Type ,MasterNo:MasterNo,PrgName:PrgName,CategoryDesc:CategoryDesc,PrgPath:PrgPath,Seq:Seq,PrgSerNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			if(Type=="QRY"){
 				    var Ii =0;
                     var Datas={};

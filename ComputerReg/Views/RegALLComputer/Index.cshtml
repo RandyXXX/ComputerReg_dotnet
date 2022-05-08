@@ -6,7 +6,7 @@
 	$(document).ready(function () {
 		//SaveData('QRY');
 		var AA={};
-		$.post("/RegALLComputer", { Way: "INIT",ServerKey:ServerKey,fingerprint:fingerprint}, function (data, result) {
+		$.post("RegALLComputer", { Way: "INIT",ServerKey:ServerKey,fingerprint:fingerprint}, function (data, result) {
 			if (data.message == "OK") {
 				AA=JSON.parse(data.data);
 				//selown_type selown_typeQ selown_typeU
@@ -144,7 +144,7 @@
 		Desc=$("#txtDescU").val();
 
 
-		$.post("/RegALLComputer",{ Way: "UPDMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc ,computer_id:computer_id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+		$.post("RegALLComputer",{ Way: "UPDMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc ,computer_id:computer_id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			
 			unblock();
 			SaveData("QRY");
@@ -171,7 +171,7 @@
 		$("#txtFajNoU").val("");
 		$("#txtDescU").val("");
 
-		$.post("/RegALLComputer",{Way: "Q1" ,id:id ,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+		$.post("RegALLComputer",{Way: "Q1" ,id:id ,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			AA=JSON.parse(data.data);
 			//回傳的資料
 			$("#selown_typeU").val(AA[0].Own_Type);
@@ -452,7 +452,7 @@
 		FajNo=$("#txtFajNo").val();
 		Desc=$("#txtDesc").val();
 		UseEmpno=$("#txtEmpno").val();
-		$.post("/RegALLComputer",{ Way: "CheckMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc, UseEmpno:UseEmpno,ServerKey:ServerKey,fingerprint:fingerprint},function(Datas,result){
+		$.post("RegALLComputer",{ Way: "CheckMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc, UseEmpno:UseEmpno,ServerKey:ServerKey,fingerprint:fingerprint},function(Datas,result){
 			if(Datas.Data.checkdata.Checkmessage!="OK"){
 				AA=JSON.parse(data.data);
 				alert(AA.checkdata.Checkmessage);
@@ -462,7 +462,7 @@
 
 
 			}else{	
-				$.post("/RegALLComputer",{Way: "ADDMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc, UseEmpno:UseEmpno,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+				$.post("RegALLComputer",{Way: "ADDMAC" ,MAC:JSON.stringify(MAC), own_type:own_type , HostName:HostName , FajNo:FajNo ,Desc:Desc, UseEmpno:UseEmpno,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			
 					unblock();
 					SaveData("QRY");
@@ -495,7 +495,7 @@
 			default:
 			break;
 		}
-		$.post("/RegALLComputer",{ Way: Type , id: id ,QueryEmpno:$("#txtQryEmpno").val() ,own_type:own_type,stats:stats, QueryMacAddress :$("#txtQryMacAddress").val(), QueryFajNo : $("#txtQryFajNo").val() , Page:Page,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+		$.post("RegALLComputer",{ Way: Type , id: id ,QueryEmpno:$("#txtQryEmpno").val() ,own_type:own_type,stats:stats, QueryMacAddress :$("#txtQryMacAddress").val(), QueryFajNo : $("#txtQryFajNo").val() , Page:Page,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
 			if(Type=="QRY"){
 				var Ii =0;
 				var Jj=0;

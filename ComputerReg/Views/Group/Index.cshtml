@@ -12,7 +12,7 @@
         var empno=$("#txtEmpnoA").val();
         var GROUPNO=$("#txtID").val();
         var AD=$("#txtADA").val();
-        $.post("/Group",{Way: "ADDGU",GROUPNO: GROUPNO,EMPNO:empno ,AD:AD,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+        $.post("Group",{Way: "ADDGU",GROUPNO: GROUPNO,EMPNO:empno ,AD:AD,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
             ModifyGroupUser(GROUPNO);
             $("#txtEmpnoA").val("");
 
@@ -32,7 +32,7 @@
 
     function PreGroupPrg(id){
         var GroupID=$("#txtID").val();
-        $.post("/Group",{Way: "DELGP",SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+        $.post("Group",{Way: "DELGP",SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
             ModifyGroupPrg(GroupID);
 
 
@@ -44,7 +44,7 @@
         var PrgID=$("#selPrg").val();
 
 
-        $.post("/Group",{Way: "ADDGP",PrgSerNo:PrgID , GROUPNO : GroupID,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+        $.post("Group",{Way: "ADDGP",PrgSerNo:PrgID , GROUPNO : GroupID,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
             //Cancel();
             ModifyGroupPrg(GroupID);
         });
@@ -70,7 +70,7 @@
         $("#txtID").val(id);
         var w = $(window).width();
         var AA={};
-        $.post("/Group",{ Way: "Q1",SeqNo:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+        $.post("Group",{ Way: "Q1",SeqNo:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
             
             AA=JSON.parse(data.data);
             $("#txtGROUPNOU").val(AA[0].GROUPNO);
@@ -106,7 +106,7 @@
         $("#txtID").val(id);
         var w = $(window).width();
         var DatasA={};
-        $.post("/Group",{Function : "Group" , Way: "QRYGU",GROUPNO:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+        $.post("Group",{Function : "Group" , Way: "QRYGU",GROUPNO:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
             var Ii =0;
             var Htmls="";
 
@@ -152,7 +152,7 @@
         var DatasA={};
         var DatasB={};
         var AA={};
-        $.post("/Group",{Function : "Group" , Way: "QRYGP",GROUPNO:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+        $.post("Group",{Function : "Group" , Way: "QRYGP",GROUPNO:$("#txtID").val(),ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
             var Ii =0;
             var Htmls="";
             AA=JSON.parse(data.data);
@@ -261,7 +261,7 @@
                 id=$("#txtID").val();
 
             }
-            $.post("/Group",{Function : "Group" , Way: Type ,GROUPNO : GROUPNO, GroupName : GroupName, GroupDesc : GroupDesc,SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
+            $.post("Group",{Function : "Group" , Way: Type ,GROUPNO : GROUPNO, GroupName : GroupName, GroupDesc : GroupDesc,SeqNo:id,ServerKey:ServerKey,fingerprint:fingerprint},function(data,result){
                 if(Type=="QRY"){
                     var Ii =0;
                     var Datas={};

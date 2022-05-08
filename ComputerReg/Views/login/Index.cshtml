@@ -93,12 +93,12 @@
              UserAccount=$("#txtAccount").val();
         }
         Pass=$("#txtPassword").val();
-        $.post("/login",{LoginType: loginWay, DomainName: AD, UserAccount: UserAccount, UserPwd: Pass,fingerprint:fingerprint},function(data,result){
+        $.post("login",{LoginType: loginWay, DomainName: AD, UserAccount: UserAccount, UserPwd: Pass,fingerprint:fingerprint},function(data,result){
             if(data.serverKey!=""){
 
                 window.localStorage.setItem('ServerKey', data.serverKey);
                 window.localStorage.setItem('UserName', data.userName);
-                window.location.href="/";
+                window.location.href=".";
             }
 
         });
