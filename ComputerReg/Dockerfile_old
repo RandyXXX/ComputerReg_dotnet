@@ -7,13 +7,14 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
-COPY ["*.sln", ".."]
+COPY ["ComputerReg/ComputerReg.sln", ".."]
 COPY ["ComputerReg.csproj", "."]
-COPY ["DataLibrary/DataLibrary.csproj", ".."]
-COPY ["AES/AES/*.csproj", "../AES/"]
+COPY ["/DataLibrary/DataLibrary.csproj", "."]
+COPY ["/AES/AES/AES.csproj", "."]
+
 RUN dotnet restore "./ComputerReg.csproj"
 COPY . .
-WORKDIR "/src/ComputerReg"
+WORKDIR "/src/."
 RUN dotnet build "ComputerReg.csproj" -c Release -o /app/build
 
 FROM build AS publish
